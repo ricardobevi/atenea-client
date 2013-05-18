@@ -1,0 +1,29 @@
+<!-- START SNIPPET: beans -->
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:jaxws="http://cxf.apache.org/jaxws"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans 
+					       http://www.springframework.org/schema/beans/spring-beans.xsd 
+					       http://cxf.apache.org/jaxws http://cxf.apache.org/schema/jaxws.xsd">
+
+
+	<bean id="loggingInInterceptor" class="org.apache.cxf.interceptor.LoggingInInterceptor" />
+	<bean id="loggingOutInterceptor" class="org.apache.cxf.interceptor.LoggingOutInterceptor" />
+
+	<bean id="clientFactory" class="org.apache.cxf.jaxws.JaxWsProxyFactoryBean">
+		<property name="serviceClass"
+			value="com.spring.webservices.taller1.service.HolaMundoService" />
+		<property name="address"
+			value="http://localhost:8080/basicwebservice/holamundoservice?wsdl" />
+		<property name="inInterceptors" ref="loggingInInterceptor" />
+		<property name="outInterceptors" ref="loggingOutInterceptor" />
+	</bean>
+
+	<bean id="client" class="com.spring.webservices.taller1.service.HolaMundoService"
+		factory-bean="clientFactory" factory-method="create" />
+
+	<bean id="mainguibean" class="org.squadra.atenea.speech.gui.MainGUI">
+		<property name="client" ref="client" />
+	</bean>
+
+</beans>
+<!-- END SNIPPET: beans -->
