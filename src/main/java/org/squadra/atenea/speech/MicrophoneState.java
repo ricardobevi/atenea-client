@@ -1,6 +1,10 @@
 package org.squadra.atenea.speech;
 
-// Listening del micr�fono
+
+/**
+ * Listening del microfono
+ * @author tempuses
+ * */
 public class MicrophoneState implements Runnable {
 	
     @Override

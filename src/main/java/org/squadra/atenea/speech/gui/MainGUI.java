@@ -16,6 +16,11 @@ import org.squadra.atenea.speech.RecognizeThread;
 import org.squadra.atenea.speech.microphone.Microphone;
 import org.squadra.atenea.webservice.AteneaWs;
 
+/**
+ * Interfaz grafica que permite utilizar el cliente
+ * 
+ * @author tempuses
+ */
 @SuppressWarnings("serial")
 @EqualsAndHashCode
 @ToString
@@ -33,7 +38,7 @@ class MainGUI extends javax.swing.JFrame {
 	private Microphone microphone = new Microphone(AudioFileFormat.Type.WAVE); // Creo
 																				// un
 																				// objeto
-																				// Microphone
+																				// microphone
 	private AteneaWs client;
 
 	// Funcion que se ejecuta al hacer click en el boton Grabar

@@ -7,7 +7,11 @@ import org.squadra.atenea.recognizer.GoogleResponse;
 import org.squadra.atenea.recognizer.Recognizer;
 import org.squadra.atenea.webservice.AteneaWs;
 
-// Funci�n que se encarga de la traducci�n de voz a texto
+/**
+ * Funcion que se encarga de la traduccion de voz a texto y ejecuta la conversion texto a voz
+ * @author tempuses
+ *
+ */
 public class RecognizeThread implements Runnable {
 
 	private JTextField mensaje;

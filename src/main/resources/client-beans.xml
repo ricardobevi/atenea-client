@@ -5,10 +5,15 @@
 					       http://www.springframework.org/schema/beans/spring-beans.xsd 
 					       http://cxf.apache.org/jaxws http://cxf.apache.org/schema/jaxws.xsd">
 
-
+	<!-- interceptan los mensajes enviados y recibidos para loggearlos   -->
 	<bean id="loggingInInterceptor" class="org.apache.cxf.interceptor.LoggingInInterceptor" />
 	<bean id="loggingOutInterceptor" class="org.apache.cxf.interceptor.LoggingOutInterceptor" />
 
+	<!-- 
+	configura el cliente webservice indicando 
+	la ruta donde se expone el mismo, la que interfaz utiliza
+	y quien lo interceptara para generar log  
+	-->
 	<bean id="clientFactory" class="org.apache.cxf.jaxws.JaxWsProxyFactoryBean">
 		<property name="serviceClass"
 			value="org.squadra.atenea.webservice.AteneaWs" />
@@ -21,6 +26,7 @@
 	<bean id="client" class="org.squadra.atenea.webservice.AteneaWs"
 		factory-bean="clientFactory" factory-method="create" />
 
+	<!-- inyecta el cliente en MainGui listo para utilizarse  -->
 	<bean id="mainguibean" class="org.squadra.atenea.speech.gui.MainGUI">
 		<property name="client" ref="client" />
 	</bean>

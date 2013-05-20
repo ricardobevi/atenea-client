@@ -6,7 +6,12 @@ import javazoom.jl.player.Player;
 
 import org.squadra.atenea.synthesiser.Synthesiser;
 
-// Funci�n que se encarga de la traducci�n de texto a voz
+/**
+ * Clase estatica que traduce texto a voz 
+ * mediante la API de google
+ * @author tempuses
+ *
+ */
 public class PlayMP3 {
 	
     public static void play(JTextField mensaje){
