@@ -11,14 +11,14 @@
 
 	<bean id="clientFactory" class="org.apache.cxf.jaxws.JaxWsProxyFactoryBean">
 		<property name="serviceClass"
-			value="com.spring.webservices.taller1.service.HolaMundoService" />
+			value="org.squadra.atenea.webservice.AteneaWs" />
 		<property name="address"
-			value="http://localhost:8080/basicwebservice/holamundoservice?wsdl" />
+			value="http://localhost:8888/AteneaWs/atenea?wsdl" />
 		<property name="inInterceptors" ref="loggingInInterceptor" />
 		<property name="outInterceptors" ref="loggingOutInterceptor" />
 	</bean>
 
-	<bean id="client" class="com.spring.webservices.taller1.service.HolaMundoService"
+	<bean id="client" class="org.squadra.atenea.webservice.AteneaWs"
 		factory-bean="clientFactory" factory-method="create" />
 
 	<bean id="mainguibean" class="org.squadra.atenea.speech.gui.MainGUI">

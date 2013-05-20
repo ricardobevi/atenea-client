@@ -14,11 +14,15 @@
 	</properties>
 
 	<dependencies>
+		
+		<!-- Dependencias de Squadra Corp  -->
+
 		<dependency>
-			<groupId>test</groupId>
-			<artifactId>neo4j</artifactId>
+			<groupId>org.squadra.atenea.webservice</groupId>
+			<artifactId>AteneaWs</artifactId>
 			<version>0.0.1-SNAPSHOT</version>
 		</dependency>
+
 
 		<!-- SPRING DEPENDENCIES -->
 		<dependency>
@@ -85,13 +89,6 @@
 			<version>0.11.6</version>
 			<type>jar</type>
 		</dependency>
-
-		<dependency>
-			<groupId>ar.com.groupname.athenas.webservice</groupId>
-			<artifactId>basicwebservice</artifactId>
-			<version>0.0.1-SNAPSHOT</version>
-		</dependency>
-
 
 		<!-- JETTY - <dependency> <groupId>org.mortbay.jetty</groupId> <artifactId>jetty</artifactId> 
 			<version>6.1.22</version> </dependency> -->

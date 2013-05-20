@@ -5,8 +5,7 @@ import javax.swing.JTextField;
 
 import org.squadra.atenea.recognizer.GoogleResponse;
 import org.squadra.atenea.recognizer.Recognizer;
-
-import com.spring.webservices.taller1.service.HolaMundoService;
+import org.squadra.atenea.webservice.AteneaWs;
 
 // Funci�n que se encarga de la traducci�n de voz a texto
 public class RecognizeThread implements Runnable {
@@ -16,13 +15,13 @@ public class RecognizeThread implements Runnable {
 									// .wav de salida
 	private String codigoDeIdioma; // Variable con el idioma utilizado por el
 									// sintetizador de voz
-	private HolaMundoService client;
+	private AteneaWs client;
 	private JButton record;
 	private String response;
 	private Boolean hasInternet = true;
 
 	public RecognizeThread(JTextField mensaje, String rutaArchivoWav,
-			String codigoDeIdioma, HolaMundoService client, JButton record) {
+			String codigoDeIdioma, AteneaWs client, JButton record) {
 		super();
 		this.mensaje = mensaje;
 		this.rutaArchivoWav = rutaArchivoWav;
@@ -59,7 +58,7 @@ public class RecognizeThread implements Runnable {
 		if (hasInternet) {
 
 			try {
-				mensaje.setText(client.holamundo(response));
+				mensaje.setText(client.dialog(response));
 			} catch (Exception e) {
 				mensaje.setText("No logró conectarme al servidor");
 			}

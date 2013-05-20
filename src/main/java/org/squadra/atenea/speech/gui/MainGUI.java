@@ -14,8 +14,7 @@ import lombok.ToString;
 import org.squadra.atenea.speech.MicrophoneState;
 import org.squadra.atenea.speech.RecognizeThread;
 import org.squadra.atenea.speech.microphone.Microphone;
-
-import com.spring.webservices.taller1.service.HolaMundoService;
+import org.squadra.atenea.webservice.AteneaWs;
 
 @SuppressWarnings("serial")
 @EqualsAndHashCode
@@ -35,7 +34,7 @@ class MainGUI extends javax.swing.JFrame {
 																				// un
 																				// objeto
 																				// Microphone
-	private HolaMundoService client;
+	private AteneaWs client;
 
 	// Funcion que se ejecuta al hacer click en el boton Grabar
 	private void recordActionPerformed(java.awt.event.ActionEvent evt) {
@@ -64,11 +63,11 @@ class MainGUI extends javax.swing.JFrame {
 
 	/******************************************************************************************************************/
 
-	public HolaMundoService getClient() {
+	public AteneaWs getClient() {
 		return client;
 	}
 
-	public void setClient(HolaMundoService client) {
+	public void setClient(AteneaWs client) {
 		this.client = client;
 	}
 
