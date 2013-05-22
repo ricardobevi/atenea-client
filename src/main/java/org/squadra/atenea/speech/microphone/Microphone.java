@@ -1,7 +1,13 @@
 package org.squadra.atenea.speech.microphone;
 
-import javax.sound.sampled.*;
 import java.io.File;
+
+import javax.sound.sampled.AudioFileFormat;
+import javax.sound.sampled.AudioFormat;
+import javax.sound.sampled.AudioInputStream;
+import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.DataLine;
+import javax.sound.sampled.TargetDataLine;
 
 /**
  * Microphone class that contains methods to capture audio from microphone

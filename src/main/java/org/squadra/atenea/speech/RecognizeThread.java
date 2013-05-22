@@ -39,7 +39,7 @@ public class RecognizeThread implements Runnable {
 
 		Recognizer recognizer = new Recognizer();
 		mensaje.setText("reconociendo...");
-		// Env�o a Google el audio y el idioma y guardo la respuesta
+		// Envio a Google el audio y el idioma y guardo la respuesta
 		// devuelta
 
 		try {
@@ -62,7 +62,7 @@ public class RecognizeThread implements Runnable {
 		if (hasInternet) {
 
 			try {
-				mensaje.setText(client.dialog(response));
+				mensaje.setText(client.dialog(response)); 
 			} catch (Exception e) {
 				mensaje.setText("No logró conectarme al servidor");
 			}
@@ -70,7 +70,17 @@ public class RecognizeThread implements Runnable {
 
 			System.out.println("****************" + mensaje.getText() + "****************");
 
-			PlayMP3.play(mensaje);
+			if ( mensaje != null && 
+				 ! mensaje.getText().isEmpty())
+			{
+				System.out.println("Respuesta audible: " + mensaje.getText());
+				PlayMP3.play( mensaje );
+			}
+			else
+			{
+				PlayMP3.play( "Se me hizo una laguna, no sé que responderte" );
+			}
+			
 			
 		} 
 			

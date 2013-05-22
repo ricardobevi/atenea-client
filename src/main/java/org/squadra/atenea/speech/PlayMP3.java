@@ -24,4 +24,15 @@ public class PlayMP3 {
             ex.printStackTrace();
         }
     }
+    
+    public static void play(String mensaje){
+        Synthesiser synthesiser = new Synthesiser();
+        try {
+        	// Reproduzco el texto
+            Player player = new Player(synthesiser.getMP3Data(mensaje));
+            player.play();
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+    }
 }
