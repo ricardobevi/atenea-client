@@ -17,11 +17,14 @@ import javax.swing.UIManager;
 import org.squadra.atenea.Atenea;
 import org.squadra.atenea.AteneaState;
 import org.squadra.atenea.stt.MicrophoneStateThread;
+import org.squadra.atenea.stt.RecognizeThread;
 
 @SuppressWarnings("serial")
 public class MainGUI extends JFrame {
 	
 	private Atenea atenea;
+	
+	private static MainGUI INSTANCE = null;
 	
 	// Componentes de la interfaz de usuario
 	private JTextField txtEstado;
@@ -44,7 +47,18 @@ public class MainGUI extends JFrame {
 	private JButton btnNuevaAccion;
 	private JButton btnValorarRegular;
 
-	public MainGUI(Atenea atenea) {
+	public static MainGUI createInstance(Atenea atenea) {
+		if (INSTANCE == null) {
+			INSTANCE = new MainGUI(atenea);
+		}
+		return INSTANCE;
+	}
+	
+	public static MainGUI getInstance() {
+		return INSTANCE;
+	}
+	
+	private MainGUI(Atenea atenea) {
 		this.atenea = atenea;
 		initComponents();
 		new Thread(new MicrophoneStateThread()).start();
@@ -78,20 +92,24 @@ public class MainGUI extends JFrame {
 				if (atenea.getState() == AteneaState.WAITING) {
 					try {
 						atenea.setState(AteneaState.RECORDING);
-						atenea.getMicrophone().captureAudioToFile("./prueba.wav");
+						setTxtEstadoDelSistema(atenea.getStateText());
+						atenea.getMicrophone().captureAudioToFile(atenea.getWaveFilePath());
 					} catch (Exception e1) {
 						System.out.println("Error al grabar archivo de audio");
 					}
 				}
 				else if (atenea.getState() == AteneaState.RECORDING) {
+					atenea.setState(AteneaState.PROCESSING);
+					setTxtEstadoDelSistema(atenea.getStateText());
 					atenea.getMicrophone().close();
+					new Thread(new RecognizeThread(atenea)).start();
 				}
 			}
 		});
 		
 		lblEstado = new JLabel("Estado del sistema:");
 		
-		txtEstado = new JTextField("Esperando...");
+		txtEstado = new JTextField(atenea.getStateText());
 		txtEstado.setEditable(false);
 		txtEstado.setColumns(10);
 		
@@ -233,7 +251,7 @@ public class MainGUI extends JFrame {
 	}
 
 	public void setTxtEstadoDelSistema(String text) {
-		txtEstado.setText(text);
+		txtEstado.setText(text + "...");
 	}
 	
 	public void setTxtTiempoDeRespuesta(String text) {
@@ -250,6 +268,10 @@ public class MainGUI extends JFrame {
 	
 	public void setTxtSalida(String text) {
 		txtSalida.setText(text);
+	}
+	
+	public String getTxtSalida() {
+		return txtSalida.getText();
 	}
 
 }

@@ -38,8 +38,7 @@ public class Synthesiser {
 
         // Open New URL connection channel.
         URLConnection urlConn = url.openConnection(); //Open connection
-
-
+        
         urlConn.addRequestProperty("User-Agent", "Mozilla/5.0 (Windows NT 6.1; WOW64; rv:2.0) Gecko/20100101 Firefox/4.0");  //Adding header for user agent is required
 
         return urlConn.getInputStream();

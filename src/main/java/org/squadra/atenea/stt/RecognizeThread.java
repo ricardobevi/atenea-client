@@ -1,10 +1,9 @@
 package org.squadra.atenea.stt;
 
-import javax.swing.JButton;
-import javax.swing.JTextField;
-
-import org.squadra.atenea.util.PlayMP3;
-import org.squadra.atenea.webservice.AteneaWs;
+import org.squadra.atenea.Atenea;
+import org.squadra.atenea.AteneaState;
+import org.squadra.atenea.gui.MainGUI;
+import org.squadra.atenea.tts.PlayMP3;
 
 /**
  * Funcion que se encarga de la traduccion de voz a texto y ejecuta la conversion texto a voz
@@ -13,79 +12,50 @@ import org.squadra.atenea.webservice.AteneaWs;
  */
 public class RecognizeThread implements Runnable {
 
-	private JTextField mensaje;
-	private String rutaArchivoWav; // Variable para guardar la ruta del archivo
-									// .wav de salida
-	private String codigoDeIdioma; // Variable con el idioma utilizado por el
-									// sintetizador de voz
-	private AteneaWs client;
-	private JButton record;
-	private String response;
+	private Atenea atenea;
 	private Boolean hasInternet = true;
 
-	public RecognizeThread(JTextField mensaje, String rutaArchivoWav,
-			String codigoDeIdioma, AteneaWs client, JButton record) {
+	public RecognizeThread(Atenea atenea) {
 		super();
-		this.mensaje = mensaje;
-		this.rutaArchivoWav = rutaArchivoWav;
-		this.codigoDeIdioma = codigoDeIdioma;
-		this.client = client;
-		this.record = record;
+		this.atenea = atenea;
 	}
 
 	@Override
 	public void run() {
 
 		Recognizer recognizer = new Recognizer();
-		mensaje.setText("reconociendo...");
-		// Envio a Google el audio y el idioma y guardo la respuesta
-		// devuelta
+		String googleResponse = "";
+		
+		// Envio a Google el audio y el idioma y guardo la respuesta devuelta
 
 		try {
 			// Creo un hilo que envie el audio a Google y reciba el texto
-			GoogleResponse googleResponse = recognizer
-					.getRecognizedDataForWave(rutaArchivoWav, codigoDeIdioma);
-			response = googleResponse.getResponse();
+			googleResponse = recognizer
+					.getRecognizedDataForWave(atenea.getWaveFilePath(), atenea.getLanguageCode())
+					.getResponse();
+			MainGUI.getInstance().setTxtEntradaAudio(googleResponse);
 
 		} catch (Exception e) {
-			mensaje.setText("UPS!! No logre conectarme a internet y requiero de ella para funcionar");
+			MainGUI.getInstance().setTxtSalida("No logro conectarme a internet.");
 			hasInternet = false;
-
 		}
 
-		// Guardo el texto recibido ya decodificado
-		// String texto = new
-		// String(googleResponse.getResponse().getBytes(),"UTF-8");
-		// Imprimo el texto por pantalla
-
 		if (hasInternet) {
-
 			try {
-				mensaje.setText(client.dialog(response)); 
-				//mensaje.setText(response); 
+				MainGUI.getInstance().setTxtSalida(atenea.getClient().dialog(googleResponse)); 
+				//mainGUI.setTxtSalida(response); 
+				
 			} catch (Exception e) {
-				mensaje.setText("No logró conectarme al servidor");
+				MainGUI.getInstance().setTxtSalida("No logro conectarme al servidor.");
 			}
+			atenea.setState(AteneaState.PLAYING);
+			MainGUI.getInstance().setTxtEstadoDelSistema(atenea.getStateText());
 			
-
-			System.out.println("****************" + mensaje.getText() + "****************");
-
-			if ( mensaje != null && 
-				 ! mensaje.getText().isEmpty())
-			{
-				System.out.println("Respuesta audible: " + mensaje.getText());
-				PlayMP3.play( mensaje );
-			}
-			else
-			{
-				PlayMP3.play( "Se me hizo una laguna, no sé que responderte" );
-			}
+			PlayMP3.play(MainGUI.getInstance().getTxtSalida());
 			
-			
+			atenea.setState(AteneaState.WAITING);
+			MainGUI.getInstance().setTxtEstadoDelSistema(atenea.getStateText());
 		} 
-			
-		record.setEnabled(true);
 		
-
 	}
 }

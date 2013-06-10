@@ -20,9 +20,7 @@ public class GoogleResponse {
      * Constructor
      */
     public GoogleResponse() {
-
     }
-
 
     /**
      * Gets the response text of what was said in the submitted Audio to Google
