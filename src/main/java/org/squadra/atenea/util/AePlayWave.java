@@ -1,4 +1,4 @@
-package org.squadra.atenea.speech.util;
+package org.squadra.atenea.util;
 
 import java.io.File;
 import java.io.IOException;

@@ -1,4 +1,4 @@
-package org.squadra.atenea.speech.microphone;
+package org.squadra.atenea.stt;
 
 import java.io.File;
 

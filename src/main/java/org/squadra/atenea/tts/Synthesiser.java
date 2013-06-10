@@ -1,4 +1,4 @@
-package org.squadra.atenea.synthesiser;
+package org.squadra.atenea.tts;
 
 import java.io.InputStream;
 import java.net.URL;

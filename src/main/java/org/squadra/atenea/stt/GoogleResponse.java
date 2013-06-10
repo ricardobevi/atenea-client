@@ -1,4 +1,4 @@
-package org.squadra.atenea.recognizer;
+package org.squadra.atenea.stt;
 
 /**
  * Class that holds the response and confidence of a Google recognizer request

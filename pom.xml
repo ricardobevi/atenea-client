@@ -30,7 +30,7 @@
 			<artifactId>AteneaWs</artifactId>
 			<version>0.0.1-SNAPSHOT</version>
 		</dependency>
-
+<!-- 
 		<dependency>
 			<groupId>javazoom.jl</groupId>
 			<artifactId>player</artifactId>
@@ -42,7 +42,7 @@
 			<artifactId>javaFlacEncoder</artifactId>
 			<version>0.3.0</version>
 		</dependency>
-
+ -->
 
 		<!-- SPRING DEPENDENCIES -->
 		<dependency>

@@ -1,10 +1,9 @@
-package org.squadra.atenea.speech;
+package org.squadra.atenea.stt;
 
 import javax.swing.JButton;
 import javax.swing.JTextField;
 
-import org.squadra.atenea.recognizer.GoogleResponse;
-import org.squadra.atenea.recognizer.Recognizer;
+import org.squadra.atenea.util.PlayMP3;
 import org.squadra.atenea.webservice.AteneaWs;
 
 /**
@@ -63,6 +62,7 @@ public class RecognizeThread implements Runnable {
 
 			try {
 				mensaje.setText(client.dialog(response)); 
+				//mensaje.setText(response); 
 			} catch (Exception e) {
 				mensaje.setText("No logró conectarme al servidor");
 			}

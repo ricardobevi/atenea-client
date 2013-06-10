@@ -1,4 +1,4 @@
-package org.squadra.atenea.recognizer;
+package org.squadra.atenea.stt;
 
 import java.io.File;
 import java.nio.ByteBuffer;

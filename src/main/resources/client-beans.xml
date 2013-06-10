@@ -27,7 +27,7 @@
 		factory-bean="clientFactory" factory-method="create" />
 
 	<!-- inyecta el cliente en MainGui listo para utilizarse  -->
-	<bean id="mainguibean" class="org.squadra.atenea.speech.gui.MainGUI">
+	<bean id="ateneabean" class="org.squadra.atenea.Atenea">
 		<property name="client" ref="client" />
 	</bean>
 

@@ -1,10 +1,10 @@
-package org.squadra.atenea.speech;
+package org.squadra.atenea.util;
 
 import javax.swing.JTextField;
 
 import javazoom.jl.player.Player;
 
-import org.squadra.atenea.synthesiser.Synthesiser;
+import org.squadra.atenea.tts.Synthesiser;
 
 /**
  * Clase estatica que traduce texto a voz 
