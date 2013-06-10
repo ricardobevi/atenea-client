@@ -13,7 +13,7 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 public class Main {
 
 	/**
-	 * El main solo se encarga de instanciar el objeto Atenea y crear el cliente.
+	 * El main solo se encarga de instanciar el objeto Atenea utilizando spring.
 	 * @param args
 	 * @author Leandro Morrone
 	 */

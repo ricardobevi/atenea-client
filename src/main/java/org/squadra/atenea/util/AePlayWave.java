@@ -12,6 +12,10 @@ import javax.sound.sampled.LineUnavailableException;
 import javax.sound.sampled.SourceDataLine;
 import javax.sound.sampled.UnsupportedAudioFileException;
 
+/**
+ * Esta clase contiene los metodos para reproducir un archivo de audio de formato WAVE.
+ * @author Unknown
+ */
 public class AePlayWave extends Thread {
 
     private String filename;

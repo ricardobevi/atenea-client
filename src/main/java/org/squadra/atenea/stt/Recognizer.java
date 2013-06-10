@@ -111,54 +111,6 @@ public class Recognizer {
     }
 
     /**
-     * Get recognized data from a Wave file.  This method will encode the wave file to a FLAC.
-     * This method will automatically set the language to en-US, or English
-     *
-     * @param waveFile Wave file to recognize
-     * @return Returns a GoogleResponse, with the response and confidence score
-     * @throws Exception Throws exception if something goes wrong
-     */
-    public GoogleResponse getRecognizedDataForWave(File waveFile) throws Exception {
-        return getRecognizedDataForWave(waveFile, "es-ES");
-    }
-
-    /**
-     * Get recognized data from a Wave file.  This method will encode the wave file to a FLAC.
-     * This method will automatically set the language to en-US, or English
-     *
-     * @param waveFile Wave file to recognize
-     * @return Returns a GoogleResponse, with the response and confidence score
-     * @throws Exception Throws exception if something goes wrong
-     */
-    public GoogleResponse getRecognizedDataForWave(String waveFile) throws Exception {
-        return getRecognizedDataForWave(waveFile, "es-ES");
-    }
-
-    /**
-     * Get recognized data from a FLAC file.
-     * This method will automatically set the language to en-US, or English
-     *
-     * @param flacFile FLAC file to recognize
-     * @return Returns a GoogleResponse, with the response and confidence score
-     * @throws Exception Throws exception if something goes wrong
-     */
-    public GoogleResponse getRecognizedDataForFlac(File flacFile) throws Exception {
-        return getRecognizedDataForFlac(flacFile, "es-ES");
-    }
-
-    /**
-     * Get recognized data from a FLAC file.
-     * This method will automatically set the language to en-US, or English
-     *
-     * @param flacFile FLAC file to recognize
-     * @return Returns a GoogleResponse, with the response and confidence score
-     * @throws Exception Throws exception if something goes wrong
-     */
-    public GoogleResponse getRecognizedDataForFlac(String flacFile) throws Exception {
-        return getRecognizedDataForFlac(flacFile, "es-ES");
-    }
-
-    /**
      * Parses the raw response from Google
      *
      * @param rawResponse The raw, unparsed response from Google

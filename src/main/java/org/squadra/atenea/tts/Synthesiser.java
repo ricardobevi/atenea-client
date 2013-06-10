@@ -12,16 +12,13 @@ import java.net.URLEncoder;
  */
 public class Synthesiser {
 
-    /**
-     * URL to query for Google synthesiser
-     */
+    /** URL to query for Google synthesiser */
     private final static String GOOGLE_SYNTHESISER_URL = "http://translate.google.com/translate_tts?tl=es&q=";
 
     /**
      * Constructor
      */
     public Synthesiser() {
-
     }
 
     /**

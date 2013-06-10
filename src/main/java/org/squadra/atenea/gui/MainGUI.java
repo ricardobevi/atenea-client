@@ -19,12 +19,53 @@ import org.squadra.atenea.AteneaState;
 import org.squadra.atenea.stt.MicrophoneStateThread;
 import org.squadra.atenea.stt.RecognizeThread;
 
+/**
+ * Interfaz de usuario principal del programa.
+ * Esta estructurada con Java Swing.
+ * Contiene las principales funciones (como dialogar por voz o texto, aprender palabra, etc.)
+ * @author Leandro Morrone
+ */
 @SuppressWarnings("serial")
 public class MainGUI extends JFrame {
 	
+	/** Objeto que contiene las variables de configuracion y estado del sistema */
 	private Atenea atenea;
 	
+	/** Singleton */
 	private static MainGUI INSTANCE = null;
+	
+	/**
+	 * Crea una instancia de la interfaz, y si ya existe la devuelve
+	 * @param atenea
+	 * @return instancia singleton de la interfaz principal
+	 * @author Leandro Morrone
+	 */
+	public static MainGUI createInstance(Atenea atenea) {
+		if (INSTANCE == null) {
+			INSTANCE = new MainGUI(atenea);
+		}
+		return INSTANCE;
+	}
+	
+	/**
+	 * Devuelve la instancia de la interfaz de usuario
+	 * @return instancia singleton de la interfaz principal
+	 * @author Leandro Morrone
+	 */
+	public static MainGUI getInstance() {
+		return INSTANCE;
+	}
+	
+	/**
+	 * Constructor privado: inicia la interfaz principal
+	 * @param atenea
+	 * @author Leandro Morrone
+	 */
+	private MainGUI(Atenea atenea) {
+		this.atenea = atenea;
+		initComponents();
+		new Thread(new MicrophoneStateThread()).start();
+	}
 	
 	// Componentes de la interfaz de usuario
 	private JTextField txtEstado;
@@ -46,36 +87,28 @@ public class MainGUI extends JFrame {
 	private JButton btnNuevoTermino;
 	private JButton btnNuevaAccion;
 	private JButton btnValorarRegular;
-
-	public static MainGUI createInstance(Atenea atenea) {
-		if (INSTANCE == null) {
-			INSTANCE = new MainGUI(atenea);
-		}
-		return INSTANCE;
-	}
 	
-	public static MainGUI getInstance() {
-		return INSTANCE;
-	}
-	
-	private MainGUI(Atenea atenea) {
-		this.atenea = atenea;
-		initComponents();
-		new Thread(new MicrophoneStateThread()).start();
-	}
-	
+	/**
+	 * Inicializo los componentes de la interfaz de usuario y la muestro en pantalla
+	 * @author Leandro Morrone
+	 */
 	private void initComponents() {
 		
+		// Seteo el look de la interfaz
 		try {
 			UIManager.setLookAndFeel("com.sun.java.swing.plaf.windows.WindowsLookAndFeel");
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 
+		// Seteo las propiedades de la ventana
 		this.setSize(new Dimension(486, 428));
 		this.setTitle("Atenea (Interfaz de prueba)");
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		this.setLocationRelativeTo(null);
+		this.setVisible(true);
+		
+		// Inicializo los componentes de la interfaz
 		
 		lblEntradaAudio = new JLabel("Entrada de audio:");
 		
@@ -150,6 +183,8 @@ public class MainGUI extends JFrame {
 		btnNuevaAccion = new JButton("Nueva acci\u00F3n");
 		
 		btnValorarRegular = new JButton("Reg");
+		
+		// Armo la estructura de la interfaz utilizando los componentes anteriores
 		
 		GroupLayout groupLayout = new GroupLayout(this.getContentPane());
 		groupLayout.setHorizontalGroup(
@@ -247,7 +282,6 @@ public class MainGUI extends JFrame {
 					.addContainerGap())
 		);
 		this.getContentPane().setLayout(groupLayout);
-		this.setVisible(true);
 	}
 
 	public void setTxtEstadoDelSistema(String text) {

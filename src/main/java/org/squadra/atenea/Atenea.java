@@ -12,8 +12,9 @@ import org.squadra.atenea.util.StaticMethods;
 import org.squadra.atenea.webservice.AteneaWs;
 
 /**
- * Esta clase carga la configuracion del programa y lanza la interfaz de usuario.
- * @author Leandro Morrone, Facundo D'Aranno
+ * Esta clase carga la configuracion del programa, contiene el estado del sistema y 
+ * lanza la interfaz de usuario.
+ * @author Leandro Morrone
  */
 public @Data class Atenea {
 
@@ -29,12 +30,16 @@ public @Data class Atenea {
 	/** Objeto microfono que contiene las funciones de captura de audio */
 	@Getter @Setter private Microphone microphone;
 	
-	/**  */
+	/** Ruta donde se guarda el archivo WAVE al finalizar la grabacion por voz */
 	@Getter @Setter private String waveFilePath;
 	
-	/**  */
+	/** Codigo de idioma para realizar la traduccion de voz a texto */
 	@Getter @Setter private String languageCode;
 	
+	/**
+	 * Constructor: Carga la configuracion, inicializa las variables y lanza la GUI principal
+	 * @author Leandro Morrone
+	 */
 	public Atenea() {
 		
 		// ACA HAY QUE CARGAR LA CONFIGURACION DEL SISTEMA
@@ -43,17 +48,33 @@ public @Data class Atenea {
 		
 		this.state = new AteneaState();
 		this.microphone = new Microphone(AudioFileFormat.Type.WAVE);
+		
 		MainGUI.createInstance(this);
 	}
 
+	/**
+	 * Obtiene el estado del sistema en formato de entero
+	 * @return estado actual del sistema
+	 * @author Leandro Morrone
+	 */
 	public int getState() {
 		return state.getState();
 	}
 	
+	/**
+	 * Obtiene el estado del sistema en formato de texto
+	 * @return estado actual del sistema
+	 * @author Leandro Morrone
+	 */
 	public String getStateText() {
 		return state.toString();
 	}
 
+	/**
+	 * Modifica el estado actual del sistema
+	 * @param state nuevo estado
+	 * @author Leandro Morrone
+	 */
 	public void setState(int state) {
 		this.state.setState(state);
 	}
