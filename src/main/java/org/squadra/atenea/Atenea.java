@@ -9,7 +9,7 @@ import lombok.Setter;
 import org.squadra.atenea.gui.MainGUI;
 import org.squadra.atenea.stt.Microphone;
 import org.squadra.atenea.util.StaticMethods;
-import org.squadra.atenea.webservice.AteneaWs;
+import org.squadra.atenea.ateneaws.AteneaWs;
 
 /**
  * Esta clase carga la configuracion del programa, contiene el estado del sistema y 

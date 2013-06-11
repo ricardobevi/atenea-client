@@ -41,10 +41,12 @@ public class MainGUI extends JFrame {
 	 * @author Leandro Morrone
 	 */
 	public static MainGUI createInstance(Atenea atenea) {
+		
 		if (INSTANCE == null) {
 			INSTANCE = new MainGUI(atenea);
 		}
 		return INSTANCE;
+		
 	}
 	
 	/**

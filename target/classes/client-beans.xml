@@ -16,18 +16,18 @@
 	-->
 	<bean id="clientFactory" class="org.apache.cxf.jaxws.JaxWsProxyFactoryBean">
 		<property name="serviceClass"
-			value="org.squadra.atenea.webservice.AteneaWs" />
+			value="org.squadra.atenea.ateneaws.AteneaWs" />
 		<property name="address"
-			value="http://localhost:8888/AteneaWs/atenea?wsdl" />
+			value="http://localhost:20002/AteneaWs/atenea?wsdl" />
 		<property name="inInterceptors" ref="loggingInInterceptor" />
 		<property name="outInterceptors" ref="loggingOutInterceptor" />
 	</bean>
 
-	<bean id="client" class="org.squadra.atenea.webservice.AteneaWs"
+	<bean id="client" class="org.squadra.atenea.ateneaws.AteneaWs"
 		factory-bean="clientFactory" factory-method="create" />
 
 	<!-- inyecta el cliente en MainGui listo para utilizarse  -->
-	<bean id="mainguibean" class="org.squadra.atenea.speech.gui.MainGUI">
+	<bean id="ateneabean" class="org.squadra.atenea.Atenea">
 		<property name="client" ref="client" />
 	</bean>
 

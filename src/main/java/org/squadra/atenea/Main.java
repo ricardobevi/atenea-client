@@ -24,6 +24,7 @@ public class Main {
     			new ClassPathXmlApplicationContext(new String[] {"client-beans.xml"});
     	
     	// Instancio el programa e inyecto el cliente desde spring
-    	Atenea atenea = (Atenea)context.getBean("ateneabean");
+    	@SuppressWarnings("unused")
+		Atenea atenea = (Atenea)context.getBean("ateneabean");
     }
 }
