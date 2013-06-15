@@ -16,7 +16,6 @@ import javax.swing.UIManager;
 
 import org.squadra.atenea.Atenea;
 import org.squadra.atenea.AteneaState;
-import org.squadra.atenea.stt.MicrophoneStateThread;
 import org.squadra.atenea.stt.RecognizeThread;
 
 /**
@@ -66,7 +65,6 @@ public class MainGUI extends JFrame {
 	private MainGUI(Atenea atenea) {
 		this.atenea = atenea;
 		initComponents();
-		new Thread(new MicrophoneStateThread()).start();
 	}
 	
 	// Componentes de la interfaz de usuario
@@ -124,21 +122,7 @@ public class MainGUI extends JFrame {
 		btnGrabarDetener.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
-				if (atenea.getState() == AteneaState.WAITING) {
-					try {
-						atenea.setState(AteneaState.RECORDING);
-						setTxtEstadoDelSistema(atenea.getStateText());
-						atenea.getMicrophone().captureAudioToFile(atenea.getWaveFilePath());
-					} catch (Exception e1) {
-						System.out.println("Error al grabar archivo de audio");
-					}
-				}
-				else if (atenea.getState() == AteneaState.RECORDING) {
-					atenea.setState(AteneaState.PROCESSING);
-					setTxtEstadoDelSistema(atenea.getStateText());
-					atenea.getMicrophone().close();
-					new Thread(new RecognizeThread(atenea)).start();
-				}
+				btnGrabarDetenerAction(e);
 			}
 		});
 		
@@ -286,6 +270,35 @@ public class MainGUI extends JFrame {
 		this.getContentPane().setLayout(groupLayout);
 	}
 
+	
+	/**
+	 * Si el sistema se encuentra en espera, comienza a grabar la entrada de audio.
+	 * Si el sistema se encuentra grabando, detiene la grabación y comienza el reconocimiento.
+	 * Esta funcion se ejecuta cuando se presiona el boton de Grabar/Detener
+	 * @param e Evento capturado al hacer click sobre el boton Grabar/Detener
+	 * @author Leandro Morrone
+	 */
+	private void btnGrabarDetenerAction(MouseEvent e) {
+		if (atenea.getState() == AteneaState.WAITING) {
+			try {
+				atenea.setState(AteneaState.RECORDING);
+				setTxtEstadoDelSistema(atenea.getStateText());
+				atenea.getMicrophone().captureAudioToFile(atenea.getWaveFilePath());
+			} catch (Exception e1) {
+				System.out.println("Error al grabar archivo de audio");
+			}
+		}
+		else if (atenea.getState() == AteneaState.RECORDING) {
+			atenea.setState(AteneaState.PROCESSING);
+			setTxtEstadoDelSistema(atenea.getStateText());
+			atenea.getMicrophone().close();
+			new Thread(new RecognizeThread(atenea)).start();
+		}
+	}
+	
+	
+	// Funciones para setear y obtener el contenido de los campos de texto de la interfaz
+	
 	public void setTxtEstadoDelSistema(String text) {
 		txtEstado.setText(text + "...");
 	}
