@@ -1,0 +1,115 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>org.squadra.atenea</groupId>
+	<artifactId>ateneaClient</artifactId>
+	<version>0.0.1-SNAPSHOT</version>
+
+	<description>Es el cliente encargado de comunicarse con el webservice</description>
+	<url>http://maven.apache.org</url>
+
+	<properties>
+		<cxf.version>2.6.3</cxf.version>
+		<main.class >org.squadra.atenea.Main</main.class>
+	</properties>
+
+	<parent>
+		<groupId>AteneaPom</groupId>
+		<artifactId>AteneaPom</artifactId>
+		<version>0.1.0-SNAPSHOT</version>
+	</parent>
+
+	<dependencies>
+
+		<!-- Dependencias de Squadra Corp -->
+
+		<dependency>
+			<groupId>org.squadra.atenea</groupId>
+			<artifactId>AteneaWs</artifactId>
+			<version>0.0.1-SNAPSHOT</version>
+		</dependency>
+
+		<dependency>
+			<groupId>net.javazoom</groupId>
+			<artifactId>JLayer</artifactId>
+			<version>1.0.1</version>
+		</dependency>
+
+		<dependency>
+			<groupId>java-flac-encoder</groupId>
+			<artifactId>JavaFlacEncoder</artifactId>
+			<version>0.3.0</version>
+		</dependency>
+
+
+		<!-- SPRING DEPENDENCIES -->
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-context</artifactId>
+			<version>3.1.2.RELEASE</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-web</artifactId>
+			<version>3.1.2.RELEASE</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-test</artifactId>
+			<version>3.1.2.RELEASE</version>
+			<scope>test</scope>
+		</dependency>
+
+		<!-- CXF DEPENDENCIES -->
+		<dependency>
+			<groupId>org.apache.cxf</groupId>
+			<artifactId>cxf-rt-frontend-jaxws</artifactId>
+			<version>${cxf.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.apache.cxf</groupId>
+			<artifactId>cxf-rt-transports-http</artifactId>
+			<version>${cxf.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.apache.cxf</groupId>
+			<artifactId>cxf-rt-transports-http-jetty</artifactId>
+			<version>${cxf.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.apache.cxf</groupId>
+			<artifactId>cxf-rt-bindings-soap</artifactId>
+			<version>${cxf.version}</version>
+		</dependency>
+
+		<!-- JUNIT DEPENDENCY -->
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>4.10</version>
+		</dependency>
+
+
+		<dependency>
+			<groupId>log4j</groupId>
+			<artifactId>log4j</artifactId>
+			<version>1.2.16</version>
+		</dependency>
+
+
+		<dependency>
+			<groupId>org.projectlombok</groupId>
+			<artifactId>lombok</artifactId>
+			<version>0.11.6</version>
+			<type>jar</type>
+		</dependency>
+
+
+	</dependencies>
+
+</project>
