@@ -29,6 +29,7 @@
 			<version>0.0.1-SNAPSHOT</version>
 		</dependency>
 
+		<!-- 
 		<dependency>
 			<groupId>net.javazoom</groupId>
 			<artifactId>JLayer</artifactId>
@@ -40,7 +41,7 @@
 			<artifactId>JavaFlacEncoder</artifactId>
 			<version>0.3.0</version>
 		</dependency>
-
+ 		-->
 
 		<!-- SPRING DEPENDENCIES -->
 		<dependency>

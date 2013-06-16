@@ -10,7 +10,7 @@ import org.squadra.atenea.tts.PlayTextMessage;
  * para obtener una respuesta y la reproduce.
  * @author Facundo D'Aranno, Leandro Morrone
  */
-public class RecognizeThread implements Runnable {
+public class RecognizeVoiceThread implements Runnable {
 
 	/** Objeto que contiene las variables de configuracion y estado del sistema */
 	private Atenea atenea;
@@ -19,7 +19,7 @@ public class RecognizeThread implements Runnable {
 	 * Constructor
 	 * @param atenea
 	 */
-	public RecognizeThread(Atenea atenea) {
+	public RecognizeVoiceThread(Atenea atenea) {
 		this.atenea = atenea;
 	}
 
@@ -56,7 +56,11 @@ public class RecognizeThread implements Runnable {
 			atenea.setState(AteneaState.PLAYING);
 			MainGUI.getInstance().setTxtEstadoDelSistema(atenea.getStateText());
 			
-			PlayTextMessage.play(MainGUI.getInstance().getTxtSalida());
+			try {
+				PlayTextMessage.play(MainGUI.getInstance().getTxtSalida());
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
 			
 			atenea.setState(AteneaState.WAITING);
 			MainGUI.getInstance().setTxtEstadoDelSistema(atenea.getStateText());

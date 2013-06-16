@@ -16,7 +16,8 @@ import javax.swing.UIManager;
 
 import org.squadra.atenea.Atenea;
 import org.squadra.atenea.AteneaState;
-import org.squadra.atenea.stt.RecognizeThread;
+import org.squadra.atenea.stt.RecognizeTextThread;
+import org.squadra.atenea.stt.RecognizeVoiceThread;
 
 /**
  * Interfaz de usuario principal del programa.
@@ -139,6 +140,12 @@ public class MainGUI extends JFrame {
 		txtEntradaTexto.setFont(new Font("Tahoma", Font.PLAIN, 11));
 		
 		btnEnviar = new JButton("Enviar");
+		btnEnviar.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				btnEnviarAction(e);
+			}
+		});
 		
 		lblSalida = new JLabel("Salida:");
 		
@@ -292,11 +299,24 @@ public class MainGUI extends JFrame {
 			atenea.setState(AteneaState.PROCESSING);
 			setTxtEstadoDelSistema(atenea.getStateText());
 			atenea.getMicrophone().close();
-			new Thread(new RecognizeThread(atenea)).start();
+			new Thread(new RecognizeVoiceThread(atenea)).start();
 		}
 	}
 	
-	
+
+	/**
+	 * 
+	 * @param e
+	 */
+	protected void btnEnviarAction(MouseEvent e) {
+		if (atenea.getState() == AteneaState.WAITING) {
+			atenea.setState(AteneaState.PROCESSING);
+			setTxtEstadoDelSistema(atenea.getStateText());
+			atenea.getMicrophone().close();
+			new Thread(new RecognizeTextThread(atenea)).start();
+		}
+	}
+
 	// Funciones para setear y obtener el contenido de los campos de texto de la interfaz
 	
 	public void setTxtEstadoDelSistema(String text) {
@@ -321,6 +341,10 @@ public class MainGUI extends JFrame {
 	
 	public String getTxtSalida() {
 		return txtSalida.getText();
+	}
+	
+	public String getTxtEntradaTexto() {
+		return txtEntradaTexto.getText();
 	}
 
 }

@@ -1,5 +1,6 @@
 package org.squadra.atenea.tts;
 
+import javazoom.jl.decoder.JavaLayerException;
 import javazoom.jl.player.Player;
 
 
@@ -12,14 +13,12 @@ public class PlayTextMessage {
 	/**
 	 * Reproduce un mensaje de texto utilizando el sintetizador de Google
 	 * @param message Mensaje de texto a ser reproducido
+	 * @throws Exception 
+	 * @throws JavaLayerException 
 	 */
-    public static void play(String message){
+    public static void play(String message) throws Exception {
         Synthesiser synthesiser = new Synthesiser();
-        try {
-            Player player = new Player(synthesiser.getMP3Data(message));
-            player.play();
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
+        Player player = new Player(synthesiser.getMP3Data(message));
+        player.play();
     }
 }
