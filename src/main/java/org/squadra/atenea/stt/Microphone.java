@@ -1,5 +1,6 @@
 package org.squadra.atenea.stt;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 
 import javax.sound.sampled.AudioFileFormat;
@@ -37,6 +38,11 @@ public class Microphone {
      * Variable for the audios saved file type
      */
     private AudioFileFormat.Type fileType;
+    
+    /**
+     * Variable to save the audio input stream
+     */
+    private AudioInputStream audioInputStream;
 
     /**
      * Variable that holds the saved audio file
@@ -87,6 +93,13 @@ public class Microphone {
         this.targetDataLine = targetDataLine;
     }
 
+    public AudioInputStream getAudioInputStream() {
+		return audioInputStream;
+	}
+
+	public void setAudioInputStream(AudioInputStream audioInputStream) {
+		this.audioInputStream = audioInputStream;
+	}
 
     /**
      * Constructor
@@ -113,11 +126,8 @@ public class Microphone {
         DataLine.Info dataLineInfo = new DataLine.Info(TargetDataLine.class, getAudioFormat());
         setTargetDataLine((TargetDataLine) AudioSystem.getLine(dataLineInfo));
 
-
         //Get Audio
         new Thread(new CaptureThread()).start();
-
-
     }
 
     /**
@@ -134,11 +144,8 @@ public class Microphone {
         DataLine.Info dataLineInfo = new DataLine.Info(TargetDataLine.class, getAudioFormat());
         setTargetDataLine((TargetDataLine) AudioSystem.getLine(dataLineInfo));
 
-
         //Get Audio
         new Thread(new CaptureThread()).start();
-
-
     }
 
     /**
@@ -159,21 +166,25 @@ public class Microphone {
         //true,false
         return new AudioFormat(sampleRate, sampleSizeInBits, channels, signed, bigEndian);
     }
-
+    Thread hilito;
     /**
      * Close the microphone capture, saving all processed audio to the specified file.<br>
      * If already closed, this does nothing
      */
     public void close() {
         if (getState() == CaptureState.CLOSED) {
-        } else {
+        }
+        else {
+        	setState(CaptureState.CLOSED);
             getTargetDataLine().stop();
             getTargetDataLine().close();
         }
     }
+    
 
-    /**
+	/**
      * Thread to capture the audio from the microphone and save it to a file
+     * @author modificada por Leandro Morrone
      */
     private class CaptureThread implements Runnable {
 
@@ -187,12 +198,102 @@ public class Microphone {
                 File audioFile = getAudioFile();
                 getTargetDataLine().open(getAudioFormat());
                 getTargetDataLine().start();
-                AudioSystem.write(new AudioInputStream(getTargetDataLine()), fileType, audioFile);
+                setAudioInputStream(new AudioInputStream(getTargetDataLine()));
+                // Creo el hilo para detener la grabacion si hay silencios
+                //new Thread(new CheckSilenceThread()).start();
+                AudioSystem.write(getAudioInputStream(), fileType, audioFile);
                 setState(CaptureState.CLOSED);
             } catch (Exception ex) {
                 ex.printStackTrace();
             }
-        }
+        } 
     }
+    
+    
+    /**
+     * Thread que calcula los PCM (Pulse Code Modulation) detectados desde el microfono mientras
+     * se esta grabando, y detiene la grabacion si detecta un silencio prolongado.
+     * @author Leandro Morrone
+     */
+    private class CheckSilenceThread implements Runnable {
 
+    	private final static float MAX_8_BITS_SIGNED = Byte.MAX_VALUE;
+    	private final static float MAX_8_BITS_UNSIGNED = 0xff;
+    	private final static float MAX_16_BITS_SIGNED = Short.MAX_VALUE;
+    	private final static float MAX_16_BITS_UNSIGNED = 0xffff;
+
+    	AudioFormat	format = getAudioInputStream().getFormat();
+        int bufferSize = (int) format.getSampleRate() * format.getFrameSize();
+    	byte[] buffer = new byte[bufferSize];
+    	
+    	@Override
+    	public void run() {
+    		ByteArrayOutputStream out = new ByteArrayOutputStream();
+    		
+    		// Mientras este grabando, calculo los PCM
+    		/*while (getState() == CaptureState.PROCESSING_AUDIO) {
+    			int count = getTargetDataLine().read(buffer, 0, buffer.length);
+    			float level = calculatePCM();
+    			System.out.println(level + " - " + count);
+
+    			if (count > 0) {
+    				out.write(buffer, 0, count);
+    			}
+    		}*/
+    	}
+    	
+    	/**
+    	 * Calcula el nivel de PCM para un instante dado de la gabacion
+    	 * @return Nivel de PCM (Pulse Code Modulation)
+    	 * @author modificada por Leandro Morrone
+    	 */
+    	private float calculatePCM() {
+    		
+    		int max = 0;
+    		boolean use16Bit = (format.getSampleSizeInBits() == 16);
+    		boolean signed = (format.getEncoding() == AudioFormat.Encoding.PCM_SIGNED);
+    		boolean bigEndian = (format.isBigEndian());
+    		if (use16Bit) {
+    			for (int i = 0; i < buffer.length; i += 2) {
+    				int value = 0;
+    				int hiByte = (bigEndian ? buffer[i] : buffer[i + 1]);
+    				int loByte = (bigEndian ? buffer[i + 1] : buffer[i]);
+    				if (signed) {
+    					short shortVal = (short) hiByte;
+    					shortVal = (short) ((shortVal << 8) | (byte) loByte);
+    					value = shortVal;
+    				} else {
+    					value = (hiByte << 8) | loByte;
+    				}
+    				max = Math.max(max, value);
+    			}
+    		} else {
+    			for (int i = 0; i < buffer.length; i++) {
+    				int value = 0;
+    				if (signed) {
+    					value = buffer[i];
+    				} else {
+    					short shortVal = 0;
+    					shortVal = (short) (shortVal | buffer[i]);
+    					value = shortVal;
+    				}
+    				max = Math.max(max, value);
+    			}
+    		}
+    		if (signed) {
+    			if (use16Bit) {
+    				return (float) max / MAX_16_BITS_SIGNED;
+    			} else {
+    				return (float) max / MAX_8_BITS_SIGNED;
+    			}
+    		} else {
+    			if (use16Bit) {
+    				return (float) max / MAX_16_BITS_UNSIGNED;
+    			} else {
+    				return (float) max / MAX_8_BITS_UNSIGNED;
+    			}
+    		}
+    	}
+    	
+    }
 }

@@ -280,7 +280,7 @@ public class MainGUI extends JFrame {
 	
 	/**
 	 * Si el sistema se encuentra en espera, comienza a grabar la entrada de audio.
-	 * Si el sistema se encuentra grabando, detiene la grabación y comienza el reconocimiento.
+	 * Si el sistema se encuentra grabando, detiene la grabacion y comienza el reconocimiento.
 	 * Esta funcion se ejecuta cuando se presiona el boton de Grabar/Detener
 	 * @param e Evento capturado al hacer click sobre el boton Grabar/Detener
 	 * @author Leandro Morrone

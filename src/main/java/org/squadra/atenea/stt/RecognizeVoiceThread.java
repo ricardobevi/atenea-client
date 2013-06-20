@@ -35,7 +35,7 @@ public class RecognizeVoiceThread implements Runnable {
 			googleResponse = recognizer
 					.getRecognizedDataForWave(atenea.getWaveFilePath(), atenea.getLanguageCode())
 					.getResponse();
-			MainGUI.getInstance().setTxtEntradaAudio(googleResponse);
+			MainGUI.getInstance().setTxtEntradaAudio(new String(googleResponse.getBytes("ISO-8859-1"), "UTF-8"));
 
 		} catch (Exception e) {
 			MainGUI.getInstance().setTxtSalida("No logro conectarme a internet.");
