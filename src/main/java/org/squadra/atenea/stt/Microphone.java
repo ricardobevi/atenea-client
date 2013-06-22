@@ -166,7 +166,7 @@ public class Microphone {
         //true,false
         return new AudioFormat(sampleRate, sampleSizeInBits, channels, signed, bigEndian);
     }
-    Thread hilito;
+
     /**
      * Close the microphone capture, saving all processed audio to the specified file.<br>
      * If already closed, this does nothing
@@ -200,7 +200,7 @@ public class Microphone {
                 getTargetDataLine().start();
                 setAudioInputStream(new AudioInputStream(getTargetDataLine()));
                 // Creo el hilo para detener la grabacion si hay silencios
-                //new Thread(new CheckSilenceThread()).start();
+                // new Thread(new CheckSilenceThread()).start();
                 AudioSystem.write(getAudioInputStream(), fileType, audioFile);
                 setState(CaptureState.CLOSED);
             } catch (Exception ex) {

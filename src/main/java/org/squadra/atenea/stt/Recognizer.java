@@ -3,10 +3,15 @@ package org.squadra.atenea.stt;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.URL;
 import java.net.URLConnection;
+
+import javax.sound.sampled.UnsupportedAudioFileException;
+
+import org.squadra.atenea.exceptions.GoogleTTSException;
 
 /**
  * Class that submits FLAC audio and retrieves recognized text
@@ -31,9 +36,12 @@ public class Recognizer {
      * @param waveFile Wave file to recognize
      * @param language Language code.  This language code must match the language of the speech to be recognized. ex. en-US ru-RU
      * @return Returns a GoogleResponse, with the response and confidence score
+     * @throws UnsupportedAudioFileException 
+     * @throws IOException 
+     * @throws GoogleTTSException 
      * @throws Exception Throws exception if something goes wrong
      */
-    public GoogleResponse getRecognizedDataForWave(File waveFile, String language) throws Exception {
+    public GoogleResponse getRecognizedDataForWave(File waveFile, String language) throws IOException, GoogleTTSException {
         FlacEncoder flacEncoder = new FlacEncoder();
         File flacFile = new File(waveFile + ".flac");
 
@@ -65,9 +73,12 @@ public class Recognizer {
      * @param waveFile Wave file to recognize
      * @param language Language code.  This language code must match the language of the speech to be recognized. ex. en-US ru-RU
      * @return Returns a GoogleResponse, with the response and confidence score
+     * @throws GoogleTTSException 
+     * @throws IOException 
+     * @throws UnsupportedAudioFileException 
      * @throws Exception Throws exception if something goes wrong
      */
-    public GoogleResponse getRecognizedDataForWave(String waveFile, String language) throws Exception {
+    public GoogleResponse getRecognizedDataForWave(String waveFile, String language) throws IOException, GoogleTTSException {
         return getRecognizedDataForWave(new File(waveFile), language);
     }
 
@@ -77,9 +88,10 @@ public class Recognizer {
      * @param flacFile FLAC file to recognize
      * @param language Language code.  This language code must match the language of the speech to be recognized. ex. en-US ru-RU
      * @return Returns a GoogleResponse, with the response and confidence score
+     * @throws GoogleTTSException 
      * @throws Exception Throws exception if something goes wrong
      */
-    public GoogleResponse getRecognizedDataForFlac(File flacFile, String language) throws Exception {
+    public GoogleResponse getRecognizedDataForFlac(File flacFile, String language) throws GoogleTTSException {
         String response = rawRequest(flacFile, language);
         String[] parsedResponse = parseResponse(response);
 
@@ -94,7 +106,6 @@ public class Recognizer {
             googleResponse.setConfidence(null);
         }
 
-
         return googleResponse;
     }
 
@@ -104,9 +115,10 @@ public class Recognizer {
      * @param flacFile FLAC file to recognize
      * @param language Language code.  This language code must match the language of the speech to be recognized. ex. en-US ru-RU
      * @return Returns a GoogleResponse, with the response and confidence score
+     * @throws GoogleTTSException 
      * @throws Exception Throws exception if something goes wrong
      */
-    public GoogleResponse getRecognizedDataForFlac(String flacFile, String language) throws Exception {
+    public GoogleResponse getRecognizedDataForFlac(String flacFile, String language) throws GoogleTTSException {
         return getRecognizedDataForFlac(new File(flacFile), language);
     }
 
@@ -136,53 +148,60 @@ public class Recognizer {
      *
      * @param inputFile Input files to recognize
      * @return Returns the raw, unparsed response from Google
+     * @throws GoogleTTSException 
      * @throws Exception Throws exception if something went wrong
      */
-    private String rawRequest(File inputFile, String language) throws Exception {
+    private String rawRequest(File inputFile, String language) throws GoogleTTSException {
         URL url;
         URLConnection urlConn;
         OutputStream outputStream;
         BufferedReader br;
+        String response = "";
 
-        // URL of Remote Script.
-        url = new URL(GOOGLE_RECOGNIZER_URL_NO_LANG + language);
-
-        // Open New URL connection channel.
-        urlConn = url.openConnection();
-
-        // we want to do output.
-        urlConn.setDoOutput(true);
-
-        // No caching
-        urlConn.setUseCaches(false);
-
-        // Specify the header content type.
-        urlConn.setRequestProperty("Content-Type", "audio/x-flac; rate=8000");
-
-        // Send POST output.
-        outputStream = urlConn.getOutputStream();
-
-
-        FileInputStream fileInputStream = new FileInputStream(inputFile);
-
-        byte[] buffer = new byte[256];
-
-        while ((fileInputStream.read(buffer, 0, 256)) != -1) {
-            outputStream.write(buffer, 0, 256);
+        try {
+	        // URL of Remote Script.
+	        url = new URL(GOOGLE_RECOGNIZER_URL_NO_LANG + language);
+	
+	        // Open New URL connection channel.
+	        urlConn = url.openConnection();
+	
+	        // we want to do output.
+	        urlConn.setDoOutput(true);
+	
+	        // No caching
+	        urlConn.setUseCaches(false);
+	
+	        // Specify the header content type.
+	        urlConn.setRequestProperty("Content-Type", "audio/x-flac; rate=8000");
+	
+	        // Send POST output.
+	        outputStream = urlConn.getOutputStream();
+	
+	
+	        FileInputStream fileInputStream = new FileInputStream(inputFile);
+	
+	        byte[] buffer = new byte[256];
+	
+	        while ((fileInputStream.read(buffer, 0, 256)) != -1) {
+	            outputStream.write(buffer, 0, 256);
+	        }
+	
+	        fileInputStream.close();
+	        outputStream.close();
+	
+	        // Get response data.
+	        br = new BufferedReader(new InputStreamReader(urlConn.getInputStream()));
+	
+	        response = br.readLine();
+	
+	        br.close();
+	
+        } catch (Exception e) {
+        	e.printStackTrace();
+        	throw new GoogleTTSException(e.getMessage());
         }
 
-        fileInputStream.close();
-        outputStream.close();
-
-        // Get response data.
-        br = new BufferedReader(new InputStreamReader(urlConn.getInputStream()));
-
-        String response = br.readLine();
-
-        br.close();
-
-        return response;
-
+	    return response;
     }
 
 

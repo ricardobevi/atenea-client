@@ -1,6 +1,7 @@
 package org.squadra.atenea.stt;
 
 import java.io.File;
+import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import javaFlacEncoder.FLACEncoder;
@@ -10,6 +11,9 @@ import javaFlacEncoder.StreamConfiguration;
 import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.UnsupportedAudioFileException;
+
+import org.squadra.atenea.exceptions.GoogleTTSException;
 
 /**
  * Class that contains methods to encode Wave files to FLAC files
@@ -30,15 +34,16 @@ public class FlacEncoder {
      *
      * @param inputFile  Input wave file
      * @param outputFile Output FLAC file
+     * @throws GoogleTTSException 
+     * @throws IOException 
+     * @throws UnsupportedAudioFileException 
      */
-    public void convertWaveToFlac(File inputFile, File outputFile) {
-
+    public void convertWaveToFlac(File inputFile, File outputFile) throws IOException {
 
         StreamConfiguration streamConfiguration = new StreamConfiguration();
         streamConfiguration.setSampleRate(8000);
         streamConfiguration.setBitsPerSample(16);
         streamConfiguration.setChannelCount(1);
-
 
         try {
             AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(inputFile);
@@ -78,9 +83,8 @@ public class FlacEncoder {
 
             audioInputStream.close();
             flacOutputStream.close();
-
-        } catch (Exception ex) {
-            ex.printStackTrace();
+        } catch (Exception e) {
+        	e.printStackTrace();
         }
     }
 
@@ -91,8 +95,11 @@ public class FlacEncoder {
      *
      * @param inputFile  Input wave file
      * @param outputFile Output FLAC file
+     * @throws GoogleTTSException 
+     * @throws IOException 
+     * @throws UnsupportedAudioFileException 
      */
-    public void convertWaveToFlac(String inputFile, String outputFile) {
+    public void convertWaveToFlac(String inputFile, String outputFile) throws IOException {
         convertWaveToFlac(new File(inputFile), new File(outputFile));
     }
 

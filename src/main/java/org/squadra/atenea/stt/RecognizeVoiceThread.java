@@ -1,7 +1,12 @@
 package org.squadra.atenea.stt;
 
+import java.io.IOException;
+
+import javax.sound.sampled.UnsupportedAudioFileException;
+
 import org.squadra.atenea.Atenea;
 import org.squadra.atenea.AteneaState;
+import org.squadra.atenea.exceptions.GoogleTTSException;
 import org.squadra.atenea.gui.MainGUI;
 import org.squadra.atenea.tts.PlayTextMessage;
 
@@ -28,7 +33,7 @@ public class RecognizeVoiceThread implements Runnable {
 
 		Recognizer recognizer = new Recognizer();
 		String googleResponse = "";
-		Boolean hasInternet = true;
+		Boolean responseOk = true;
 		
 		// Envio a Google el audio y el idioma y guardo la respuesta devuelta
 		try {
@@ -36,16 +41,26 @@ public class RecognizeVoiceThread implements Runnable {
 					.getRecognizedDataForWave(atenea.getWaveFilePath(), atenea.getLanguageCode())
 					.getResponse();
 			MainGUI.getInstance().setTxtEntradaAudio(new String(googleResponse.getBytes("ISO-8859-1"), "UTF-8"));
-
+			
+		} catch (GoogleTTSException e) {
+			MainGUI.getInstance().setTxtSalida("No logro conectarme a Internet.");
+			e.printStackTrace();
+			responseOk = false;
+		} catch (IOException e) {
+			MainGUI.getInstance().setTxtSalida("Tuve un problema interno, ¿podrías repetirmelo?.");
+			e.printStackTrace();
+			responseOk = false;
 		} catch (Exception e) {
-			MainGUI.getInstance().setTxtSalida("No logro conectarme a internet.");
-			hasInternet = false;
-		}
+			MainGUI.getInstance().setTxtSalida("Disculpa, ¿podrías hablar un poco más alto?");
+			e.printStackTrace();
+			responseOk = false;
+		}	
 		
 		// Si hay internet, envio el mensaje de entrada al servidor
-		if (hasInternet) {
+		if (responseOk) {
 			try {
-				MainGUI.getInstance().setTxtSalida(atenea.getClient().dialog(googleResponse));
+				MainGUI.getInstance().setTxtSalida(atenea.getClient().dialog(
+						new String(googleResponse.getBytes("ISO-8859-1"), "UTF-8")));
 				
 				// Descomentar la siguiente linea para que el sistema repita lo que entendio
 				// mainGUI.setTxtSalida(response); 
@@ -53,18 +68,19 @@ public class RecognizeVoiceThread implements Runnable {
 			} catch (Exception e) {
 				MainGUI.getInstance().setTxtSalida("No logro conectarme al servidor.");
 			}
+		} 
+		
+		try {
 			atenea.setState(AteneaState.PLAYING);
 			MainGUI.getInstance().setTxtEstadoDelSistema(atenea.getStateText());
-			
-			try {
-				PlayTextMessage.play(MainGUI.getInstance().getTxtSalida());
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-			
-			atenea.setState(AteneaState.WAITING);
-			MainGUI.getInstance().setTxtEstadoDelSistema(atenea.getStateText());
-		} 
+			PlayTextMessage.play(MainGUI.getInstance().getTxtSalida());
+		} catch (Exception e) {
+			MainGUI.getInstance().setTxtSalida("No logro conectarme a Internet.");
+			e.printStackTrace();
+		}
+		
+		atenea.setState(AteneaState.WAITING);
+		MainGUI.getInstance().setTxtEstadoDelSistema(atenea.getStateText());
 		
 	}
 }
