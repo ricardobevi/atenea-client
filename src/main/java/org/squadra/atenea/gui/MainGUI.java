@@ -1,6 +1,9 @@
 package org.squadra.atenea.gui;
+
 import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
@@ -18,6 +21,7 @@ import org.squadra.atenea.Atenea;
 import org.squadra.atenea.AteneaState;
 import org.squadra.atenea.stt.RecognizeTextThread;
 import org.squadra.atenea.stt.RecognizeVoiceThread;
+import org.squadra.atenea.macros.MacrosGui;
 
 /**
  * Interfaz de usuario principal del programa.
@@ -275,6 +279,14 @@ public class MainGUI extends JFrame {
 					.addContainerGap())
 		);
 		this.getContentPane().setLayout(groupLayout);
+		
+		btnNuevaAccion.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				setExtendedState(JFrame.ICONIFIED);
+				MacrosGui win = new MacrosGui();
+				win.launchFrame();
+			}
+		});
 	}
 
 	

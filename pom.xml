@@ -10,7 +10,7 @@
 
 	<properties>
 		<cxf.version>2.6.3</cxf.version>
-		<main.class >org.squadra.atenea.Main</main.class>
+		<main.class>org.squadra.atenea.Main</main.class>
 	</properties>
 
 	<parent>
@@ -110,7 +110,31 @@
 			<type>jar</type>
 		</dependency>
 
+		<dependency>
+			<groupId>net.java.dev.jna</groupId>
+			<artifactId>jna</artifactId>
+			<version>3.4.0</version>
+		</dependency>
+
+		<!-- <dependency> -->
+		<!-- <groupId>org.clojars.eduardoejp</groupId> -->
+		<!-- <artifactId>jnativehook</artifactId> -->
+		<!-- </dependency> -->
+
+<!-- 		<dependency> -->
+<!-- 			<groupId>com.googlecode.javacv</groupId> -->
+<!-- 			<artifactId>javacv</artifactId> -->
+<!-- 			<version>0.3</version> -->
+<!-- 		</dependency> -->
 
 	</dependencies>
+
+<!-- 	<repositories> -->
+<!-- 		<repository> -->
+<!-- 			<id>javacv</id> -->
+<!-- 			<name>JavaCV</name> -->
+<!-- 			<url>http://maven2.javacv.googlecode.com/git/</url> -->
+<!-- 		</repository> -->
+<!-- 	</repositories> -->
 
 </project>
