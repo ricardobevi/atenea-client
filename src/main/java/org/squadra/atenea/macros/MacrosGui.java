@@ -26,8 +26,11 @@ public class MacrosGui {
 	private Checkbox click = new Checkbox("Click", CheckBoxGrp, true);
 	private Checkbox dobleClick = new Checkbox("Doble Click", CheckBoxGrp, true);
 	private MouseEventHandler example;
-
+	
+	
 	public MacrosGui() {
+
+		
 
 		/*
 		 * Metodo para el boton de inicio de grabacion
@@ -38,7 +41,8 @@ public class MacrosGui {
 					Thread.sleep(500);
 					f.setExtendedState(JFrame.ICONIFIED);
 					GlobalScreen.registerNativeHook();
-					example = new MouseEventHandler("images" + File.separatorChar + name.getText(), CheckBoxGrp.getSelectedCheckbox().getLabel());
+
+					example = new MouseEventHandler(name.getText(), CheckBoxGrp.getSelectedCheckbox().getLabel());
 
 				} catch (NativeHookException ex) {
 					System.err.println("There was a problem registering the native hook.");

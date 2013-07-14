@@ -9,6 +9,8 @@ import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.nio.file.Path;
+
 import javax.imageio.ImageIO;
 import org.jnativehook.mouse.NativeMouseEvent;
 import org.jnativehook.mouse.NativeMouseInputListener;
@@ -25,6 +27,7 @@ public class MouseEventHandler implements NativeMouseInputListener {
 	private int X1, Y1, X2, Y2;
 	private String clickType;
 	private boolean completed;
+	private File dir = new File("images");
 
 	/*
 	 * Constructor que crea el archivo del nuevo icono
@@ -33,7 +36,10 @@ public class MouseEventHandler implements NativeMouseInputListener {
 	 * del icono
 	 */
 	public MouseEventHandler(String fileName, String clickType) throws IOException {
-		fichero = new FileWriter(fileName + ".txt", true);
+		if (!dir.exists())
+			dir.mkdir();
+
+		fichero = new FileWriter(dir.toString() + File.separatorChar + fileName + ".txt", true);
 		this.clickType = clickType;
 		clicks = 0;
 		completed = false;
@@ -85,7 +91,7 @@ public class MouseEventHandler implements NativeMouseInputListener {
 				// obtenemos el tama�o del rectangulo
 				Rectangle rectangleTam = new Rectangle(X1, Y1, X2 - X1, Y2 - Y1);
 				try {
-					String iconName = "images" + File.separatorChar + "icon" + new java.util.Date().getTime() + ".jpg";
+					String iconName = dir.toString() + File.separatorChar + "icon" + new java.util.Date().getTime() + ".jpg";
 					Robot robot = new Robot();
 					// guardamos la imagen del icono indicado
 					BufferedImage bufferedImage = robot.createScreenCapture(rectangleTam);

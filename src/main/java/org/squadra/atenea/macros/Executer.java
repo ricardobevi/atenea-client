@@ -26,6 +26,7 @@ import com.googlecode.javacv.cpp.opencv_core.CvScalar;
 import com.googlecode.javacv.cpp.opencv_core.IplImage;
 
 public class Executer {
+	private File dir = new File("images");
 	String[] actions;
 	Robot robot;
 
@@ -55,7 +56,7 @@ public class Executer {
 	 */
 	public void execute() {
 		for (String name : actions) {
-			File archivo = new File("images" + File.separatorChar + name + ".txt");
+			File archivo = new File(dir.toString() + File.separatorChar + name + ".txt");
 			// Leo cada linea del archivo de iconos para hacer click y
 			// los ejecuto
 			FileReader fr;
@@ -127,7 +128,7 @@ public class Executer {
 	 * icono
 	 */
 	private int[] searchIcon(String iconFileName) throws HeadlessException, AWTException, IOException, InterruptedException {
-		String screenshootPath = "images" + File.separatorChar + "screenshot.jpg";
+		String screenshootPath = dir.toString() + File.separatorChar + "screenshot.jpg";
 		// Saco un screenshot de la pantalla
 		BufferedImage image2 = new Robot().createScreenCapture(new Rectangle(Toolkit.getDefaultToolkit().getScreenSize()));
 		ImageIO.write(image2, "jpg", new File(screenshootPath));
@@ -163,7 +164,7 @@ public class Executer {
 		cvRectangle(img, point2, point2, CvScalar.GREEN, 2, 8, 0);
 
 		try {
-			ImageIO.write(img.getBufferedImage(), "jpg", new File("images" + File.separatorChar + "result" + ".jpg"));
+			ImageIO.write(img.getBufferedImage(), "jpg", new File(dir.toString() + File.separatorChar + "result" + ".jpg"));
 		} catch (IOException e1) {
 			e1.printStackTrace();
 		}
