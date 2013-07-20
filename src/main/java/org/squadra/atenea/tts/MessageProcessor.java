@@ -36,7 +36,7 @@ public class MessageProcessor {
 	}
 	
 	private static void processOrder(String orden) {
-		Command cmd = new Command(Atenea.SO_NAME, "control", "./salida.txt");
+		Command cmd = new Command(Atenea.SO_NAME, orden, "./salida.txt");
 		cmd.run();
 	}
 	
