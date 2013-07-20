@@ -2,6 +2,7 @@ package org.squadra.atenea.stt;
 
 import org.squadra.atenea.Atenea;
 import org.squadra.atenea.AteneaState;
+import org.squadra.atenea.aiengine.Message;
 import org.squadra.atenea.gui.MainGUI;
 import org.squadra.atenea.tts.PlayTextMessage;
 
@@ -25,10 +26,15 @@ public class RecognizeTextThread implements Runnable {
 	
 	@Override
 	public void run() {
-		String inputMessage = MainGUI.getInstance().getTxtEntradaTexto();
+		String textMessage = MainGUI.getInstance().getTxtEntradaTexto();
 		
 		try {
-			MainGUI.getInstance().setTxtSalida(atenea.getClient().dialog(inputMessage));
+			Message inputMessage = new Message(textMessage);
+			
+			// ESTA LINEA ENVIA EL MENSAJE AL SERVIDOR Y RECIBE LA RESPUESTA
+			Message outputMessage = atenea.getClient().dialog(inputMessage);
+			
+			MainGUI.getInstance().setTxtSalida(outputMessage.getText());
 
 		} catch (Exception e) {
 			MainGUI.getInstance().setTxtSalida("No logro conectarme al servidor.");

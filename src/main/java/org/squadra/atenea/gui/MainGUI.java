@@ -21,7 +21,6 @@ import org.squadra.atenea.Atenea;
 import org.squadra.atenea.AteneaState;
 import org.squadra.atenea.stt.RecognizeTextThread;
 import org.squadra.atenea.stt.RecognizeVoiceThread;
-import org.squadra.atenea.macros.MacrosGui;
 
 /**
  * Interfaz de usuario principal del programa.
@@ -283,7 +282,7 @@ public class MainGUI extends JFrame {
 		btnNuevaAccion.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				setExtendedState(JFrame.ICONIFIED);
-				MacrosGui win = new MacrosGui();
+				ActionsGUI win = new ActionsGUI();
 				win.launchFrame();
 			}
 		});

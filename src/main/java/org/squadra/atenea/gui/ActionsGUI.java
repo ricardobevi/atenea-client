@@ -1,11 +1,13 @@
-package org.squadra.atenea.macros;
+package org.squadra.atenea.gui;
 
 import javax.swing.*;
 import org.jnativehook.GlobalScreen;
 import org.jnativehook.NativeHookException;
+import org.squadra.atenea.actions.Executer;
+import org.squadra.atenea.actions.MouseEventHandler;
+
 import java.awt.*;
 import java.awt.event.*;
-import java.io.File;
 import java.awt.Checkbox;
 import java.awt.CheckboxGroup;
 
@@ -13,7 +15,7 @@ import java.awt.CheckboxGroup;
  * Clase que genera la UI 
  * @author lucas
  */
-public class MacrosGui {
+public class ActionsGUI {
 	private JFrame f = new JFrame("Macros");
 	private JPanel pnlNorth = new JPanel();
 	private JPanel pnlSouth = new JPanel();
@@ -28,7 +30,7 @@ public class MacrosGui {
 	private MouseEventHandler example;
 	
 	
-	public MacrosGui() {
+	public ActionsGUI() {
 
 		
 

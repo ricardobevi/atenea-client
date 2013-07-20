@@ -1,15 +1,13 @@
-package org.squadra.atenea.macros;
+package org.squadra.atenea.actions;
 
 import java.awt.Rectangle;
 import java.awt.Robot;
-import java.awt.Toolkit;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.nio.file.Path;
 
 import javax.imageio.ImageIO;
 import org.jnativehook.mouse.NativeMouseEvent;

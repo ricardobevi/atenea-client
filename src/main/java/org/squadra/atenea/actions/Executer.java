@@ -1,4 +1,4 @@
-package org.squadra.atenea.macros;
+package org.squadra.atenea.actions;
 
 import static com.googlecode.javacv.cpp.opencv_core.IPL_DEPTH_32F;
 import static com.googlecode.javacv.cpp.opencv_core.cvCreateImage;
@@ -69,6 +69,7 @@ public class Executer {
 					System.out.println("Searching: " + icon);
 					executeIcon(icon, clickType);
 				}
+				br.close();
 			} catch (Exception e) {
 			}
 		}

@@ -2,10 +2,9 @@ package org.squadra.atenea.stt;
 
 import java.io.IOException;
 
-import javax.sound.sampled.UnsupportedAudioFileException;
-
 import org.squadra.atenea.Atenea;
 import org.squadra.atenea.AteneaState;
+import org.squadra.atenea.aiengine.Message;
 import org.squadra.atenea.exceptions.GoogleTTSException;
 import org.squadra.atenea.gui.MainGUI;
 import org.squadra.atenea.tts.PlayTextMessage;
@@ -59,11 +58,13 @@ public class RecognizeVoiceThread implements Runnable {
 		// Si hay internet, envio el mensaje de entrada al servidor
 		if (responseOk) {
 			try {
-				MainGUI.getInstance().setTxtSalida(atenea.getClient().dialog(
-						new String(googleResponse.getBytes("ISO-8859-1"), "UTF-8")));
+				Message inputMessage = new Message(
+						new String(googleResponse.getBytes("ISO-8859-1"), "UTF-8"));
 				
-				// Descomentar la siguiente linea para que el sistema repita lo que entendio
-				// mainGUI.setTxtSalida(response); 
+				// ESTA LINEA ENVIA EL MENSAJE AL SERVIDOR Y RECIBE LA RESPUESTA
+				Message outputMessage = atenea.getClient().dialog(inputMessage);
+				
+				MainGUI.getInstance().setTxtSalida(outputMessage.getText());
 				
 			} catch (Exception e) {
 				MainGUI.getInstance().setTxtSalida("No logro conectarme al servidor.");
