@@ -1,10 +1,9 @@
 package org.squadra.atenea.stt;
 
 import org.squadra.atenea.Atenea;
-import org.squadra.atenea.AteneaState;
 import org.squadra.atenea.aiengine.Message;
 import org.squadra.atenea.gui.MainGUI;
-import org.squadra.atenea.tts.PlayTextMessage;
+import org.squadra.atenea.tts.MessageProcessor;
 
 /**
  * Hilo de ejecucion que se comunica con el servidor y le envia el texto recibido de la interfaz
@@ -26,32 +25,21 @@ public class RecognizeTextThread implements Runnable {
 	
 	@Override
 	public void run() {
+		
 		String textMessage = MainGUI.getInstance().getTxtEntradaTexto();
+		Message outputMessage = new Message();
 		
 		try {
 			Message inputMessage = new Message(textMessage);
 			
 			// ESTA LINEA ENVIA EL MENSAJE AL SERVIDOR Y RECIBE LA RESPUESTA
-			Message outputMessage = atenea.getClient().dialog(inputMessage);
-			
-			MainGUI.getInstance().setTxtSalida(outputMessage.getText());
+			outputMessage = atenea.getClient().dialog(inputMessage);
 
 		} catch (Exception e) {
-			MainGUI.getInstance().setTxtSalida("No logro conectarme al servidor.");
+			outputMessage = new Message("No logro conectarme al servidor.", Message.ERROR);
 		}
 		
-		atenea.setState(AteneaState.PLAYING);
-		MainGUI.getInstance().setTxtEstadoDelSistema(atenea.getStateText());
-		
-		// Reproduzco la respuesta, si se pudo conectar a internet
-		try {
-			PlayTextMessage.play(MainGUI.getInstance().getTxtSalida());
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		
-		atenea.setState(AteneaState.WAITING);
-		MainGUI.getInstance().setTxtEstadoDelSistema(atenea.getStateText());
+		MessageProcessor.processMessage(atenea, outputMessage);
 	}
 
 }

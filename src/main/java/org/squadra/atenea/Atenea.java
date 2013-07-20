@@ -77,6 +77,7 @@ public @Data class Atenea {
 	 */
 	public void setState(int state) {
 		this.state.setState(state);
+		MainGUI.getInstance().setTxtEstadoDelSistema(this.getStateText());
 	}
 	
 }
