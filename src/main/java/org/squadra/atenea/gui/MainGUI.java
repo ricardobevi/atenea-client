@@ -7,6 +7,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
+import javax.sound.sampled.AudioFileFormat;
 import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
 import javax.swing.JButton;
@@ -300,27 +301,28 @@ public class MainGUI extends JFrame {
 		if (atenea.getState() == AteneaState.WAITING) {
 			try {
 				atenea.setState(AteneaState.RECORDING);
-				atenea.getMicrophone().captureAudioToFile(atenea.getWaveFilePath());
+				atenea.getMicrophone().startRecording();
 			} catch (Exception e1) {
 				System.out.println("Error al grabar archivo de audio");
 			}
 		}
 		else if (atenea.getState() == AteneaState.RECORDING) {
 			atenea.setState(AteneaState.PROCESSING);
-			atenea.getMicrophone().close();
+			atenea.getMicrophone().stopRecording();
+			atenea.getMicrophone().generateAudioFile(atenea.getWaveFilePath(), 
+					AudioFileFormat.Type.WAVE);
 			new Thread(new RecognizeVoiceThread(atenea)).start();
 		}
 	}
 	
-
+	
 	/**
-	 * 
-	 * @param e
+	 * Si el sistema se encuentra en espera, envia el mensaje para que sea reconocido.
+	 * @param e Evento capturado al hacer click sobre el boton Enviar
 	 */
 	protected void btnEnviarAction(MouseEvent e) {
 		if (atenea.getState() == AteneaState.WAITING) {
 			atenea.setState(AteneaState.PROCESSING);
-			atenea.getMicrophone().close();
 			new Thread(new RecognizeTextThread(atenea)).start();
 		}
 	}

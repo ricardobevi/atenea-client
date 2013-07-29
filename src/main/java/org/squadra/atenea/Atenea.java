@@ -43,11 +43,11 @@ public @Data class Atenea {
 	public Atenea() {
 		
 		// ACA HAY QUE CARGAR LA CONFIGURACION DEL SISTEMA
-		waveFilePath = "./prueba.wav";
+		waveFilePath = "./audioInput.wav";
 		languageCode = "es-ES";
 		
 		this.state = new AteneaState();
-		this.microphone = new Microphone(AudioFileFormat.Type.WAVE);
+		this.microphone = new Microphone();
 		
 		MainGUI.createInstance(this);
 	}

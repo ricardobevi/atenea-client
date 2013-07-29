@@ -1,299 +1,244 @@
 package org.squadra.atenea.stt;
 
-import java.io.ByteArrayOutputStream;
-import java.io.File;
+import javax.sound.sampled.*;
 
-import javax.sound.sampled.AudioFileFormat;
-import javax.sound.sampled.AudioFormat;
-import javax.sound.sampled.AudioInputStream;
-import javax.sound.sampled.AudioSystem;
-import javax.sound.sampled.DataLine;
-import javax.sound.sampled.TargetDataLine;
+import java.io.*;
 
 /**
- * Microphone class that contains methods to capture audio from microphone
- *
- * @author Luke Kuza
+ * Clase que contiene los metodos para capturar audio del microfono, reproducirlo y grabar
+ * un archivo de audio de salida.
+ * 
+ * http://www.java-tips.org/java-se-tips/javax.sound/capturing-audio-with-java-sound-api.html
+ * http://stackoverflow.com/questions/5800649/detect-silence-when-recording
+ * 
+ * @author Leandro Morrone
  */
 public class Microphone {
 
-    /**
-     * TargetDataLine variable to receive data from microphone
-     */
-    private TargetDataLine targetDataLine;
+	/** Variable que indica si se esta capturando audio del microfono */
+	private boolean running;
+	
+	/** Array que sirve para leer y grabar la salida de audio temporalmente */
+	private ByteArrayOutputStream out;
+	
+	/** Contiene las especificaciones del tipo de audio (ej: muestreo, canales) */
+	private AudioFormat format;
 
-    /**
-     * Enum for current Microphone state
-     */
-    public enum CaptureState {
-        PROCESSING_AUDIO, STARTING_CAPTURE, CLOSED
-    }
-
-    /**
-     * Variable for enum
-     */
-    CaptureState state;
-
-    /**
-     * Variable for the audios saved file type
-     */
-    private AudioFileFormat.Type fileType;
-    
-    /**
-     * Variable to save the audio input stream
-     */
-    private AudioInputStream audioInputStream;
-
-    /**
-     * Variable that holds the saved audio file
-     */
-    private File audioFile;
-
-    /**
-     * Gets the current state of Microphone
-     *
-     * @return PROCESSING_AUDIO is returned when the Thread is recording Audio and/or saving it to a file<br>
-     *         STARTING_CAPTURE is returned if the Thread is setting variables<br>
-     *         CLOSED is returned if the Thread is not doing anything/not capturing audio
-     */
-    public CaptureState getState() {
-        return state;
-    }
-
-    /**
-     * Sets the current state of Microphone
-     *
-     * @param state State from enum
-     */
-    private void setState(CaptureState state) {
-        this.state = state;
-    }
-
-    public File getAudioFile() {
-        return audioFile;
-    }
-
-    public void setAudioFile(File audioFile) {
-        this.audioFile = audioFile;
-    }
-
-    public AudioFileFormat.Type getFileType() {
-        return fileType;
-    }
-
-    public void setFileType(AudioFileFormat.Type fileType) {
-        this.fileType = fileType;
-    }
-
-    public TargetDataLine getTargetDataLine() {
-        return targetDataLine;
-    }
-
-    public void setTargetDataLine(TargetDataLine targetDataLine) {
-        this.targetDataLine = targetDataLine;
-    }
-
-    public AudioInputStream getAudioInputStream() {
-		return audioInputStream;
-	}
-
-	public void setAudioInputStream(AudioInputStream audioInputStream) {
-		this.audioInputStream = audioInputStream;
-	}
-
-    /**
-     * Constructor
-     *
-     * @param fileType File type to save the audio in<br>
-     *                 Example, to save as WAVE use AudioFileFormat.Type.WAVE
-     */
-    public Microphone(AudioFileFormat.Type fileType) {
-        setState(CaptureState.CLOSED);
-        setFileType(fileType);
-    }
-
-
-    /**
-     * Captures audio from the microphone and saves it a file
-     *
-     * @param audioFile The File to save the audio to
-     * @throws Exception Throws an exception if something went wrong
-     */
-    public void captureAudioToFile(File audioFile) throws Exception {
-        setState(CaptureState.STARTING_CAPTURE);
-        setAudioFile(audioFile);
-
-        DataLine.Info dataLineInfo = new DataLine.Info(TargetDataLine.class, getAudioFormat());
-        setTargetDataLine((TargetDataLine) AudioSystem.getLine(dataLineInfo));
-
-        //Get Audio
-        new Thread(new CaptureThread()).start();
-    }
-
-    /**
-     * Captures audio from the microphone and saves it a file
-     *
-     * @param audioFile The fully path (String) to a file you want to save the audio in
-     * @throws Exception Throws an exception if something went wrong
-     */
-    public void captureAudioToFile(String audioFile) throws Exception {
-        setState(CaptureState.STARTING_CAPTURE);
-        File file = new File(audioFile);
-        setAudioFile(file);
-
-        DataLine.Info dataLineInfo = new DataLine.Info(TargetDataLine.class, getAudioFormat());
-        setTargetDataLine((TargetDataLine) AudioSystem.getLine(dataLineInfo));
-
-        //Get Audio
-        new Thread(new CaptureThread()).start();
-    }
-
-    /**
-     * The audio format to save in
-     *
-     * @return Returns AudioFormat to be used later when capturing audio from microphone
-     */
-    private AudioFormat getAudioFormat() {
-        float sampleRate = 8000.0F;
-        //8000,11025,16000,22050,44100
-        int sampleSizeInBits = 16;
-        //8,16
-        int channels = 1;
-        //1,2
-        boolean signed = true;
-        //true,false
-        boolean bigEndian = false;
-        //true,false
-        return new AudioFormat(sampleRate, sampleSizeInBits, channels, signed, bigEndian);
-    }
-
-    /**
-     * Close the microphone capture, saving all processed audio to the specified file.<br>
-     * If already closed, this does nothing
-     */
-    public void close() {
-        if (getState() == CaptureState.CLOSED) {
-        }
-        else {
-        	setState(CaptureState.CLOSED);
-            getTargetDataLine().stop();
-            getTargetDataLine().close();
-        }
-    }
-    
+	// Constantes utilizadas para el calculo del PCM
+	private final static float MAX_8_BITS_SIGNED = Byte.MAX_VALUE;
+	private final static float MAX_8_BITS_UNSIGNED = 0xff;
+	private final static float MAX_16_BITS_SIGNED = Short.MAX_VALUE;
+	private final static float MAX_16_BITS_UNSIGNED = 0xffff;
 
 	/**
-     * Thread to capture the audio from the microphone and save it to a file
-     * @author modificada por Leandro Morrone
-     */
-    private class CaptureThread implements Runnable {
+	 * Constructor.
+	 */
+	public Microphone() {
+		this.format = getFormat();
+	}
 
-        /**
-         * Run method for thread
-         */
-        public void run() {
-            try {
-                setState(CaptureState.PROCESSING_AUDIO);
-                AudioFileFormat.Type fileType = getFileType();
-                File audioFile = getAudioFile();
-                getTargetDataLine().open(getAudioFormat());
-                getTargetDataLine().start();
-                setAudioInputStream(new AudioInputStream(getTargetDataLine()));
-                // Creo el hilo para detener la grabacion si hay silencios
-                // new Thread(new CheckSilenceThread()).start();
-                AudioSystem.write(getAudioInputStream(), fileType, audioFile);
-                setState(CaptureState.CLOSED);
-            } catch (Exception ex) {
-                ex.printStackTrace();
-            }
-        } 
+	/**
+	 * Carga las especificaciones tecnicas del tipo de audio a capturar.
+	 * @return AudioFormat
+	 */
+	private AudioFormat getFormat() {
+		float sampleRate = 8000.0F; // 8000,11025,16000,22050,44100
+		int sampleSizeInBits = 16; // 8,16
+		int channels = 1; // 1,2
+		boolean signed = true;
+		boolean bigEndian = false;
+		return new AudioFormat(sampleRate, sampleSizeInBits, channels, signed, bigEndian);
+	}
+
+	/**
+	 * Detiene la grabacion.
+	 */
+	public void stopRecording() {
+		running = false;
+	}
+
+	/**
+	 * Inicia la grabacion de voz por el microfono.
+	 */
+	public void startRecording() {
+		try {
+			final AudioFormat format = getFormat();
+			DataLine.Info info = new DataLine.Info(TargetDataLine.class, format);
+			final TargetDataLine line = (TargetDataLine) AudioSystem.getLine(info);
+			line.open(format);
+			line.start();
+			// llamo al hilo que captura audio y lo guarda en un buffer
+			new Thread(new CaptureThread(line)).start();
+		} catch (LineUnavailableException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	/**
+	 * Reproduce la grabacion.
+	 */
+	public void playRecording() {
+		try {
+			byte audio[] = out.toByteArray();
+			InputStream input = new ByteArrayInputStream(audio);
+			final AudioFormat format = getFormat();
+			final AudioInputStream ais = new AudioInputStream(input, format,
+					audio.length / format.getFrameSize());
+			DataLine.Info info = new DataLine.Info(SourceDataLine.class, format);
+			final SourceDataLine line = (SourceDataLine) AudioSystem
+					.getLine(info);
+			line.open(format);
+			line.start();
+			// llamo al hilo que reproduce el audio del buffer
+			new Thread(new PlayThread(ais, line)).start();
+		} catch (LineUnavailableException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	/**
+	 * Guarda el contenido del buffer en un archivo de audio de salida.
+	 * @param audioFilePath Ruta del archivo de audio de salida
+	 * @param fileType Formato del archivo de audio de salida (se recomienda WAVE)
+	 */
+	public void generateAudioFile(String audioFilePath, AudioFileFormat.Type fileType) {
+		byte[] audio = out.toByteArray();
+		InputStream input = new ByteArrayInputStream(audio);
+		try {
+			final AudioFormat format = getFormat();
+			final AudioInputStream ais = new AudioInputStream(input, format,
+					audio.length / format.getFrameSize());
+			AudioSystem.write(ais, fileType, new File(audioFilePath));
+			input.close();
+			System.out.println("Archivo grabado!");
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	
+	/**
+	 * Thread que captura el audio del microfono y lo almacena en el buffer.
+	 * @author Leandro Morrone
+	 */
+	private class CaptureThread implements Runnable {
+		
+		int bufferSize;
+		byte buffer[];
+		TargetDataLine line;
+		
+		public CaptureThread(TargetDataLine line) {
+			this.line = line;
+			bufferSize = (int) format.getSampleRate() * format.getFrameSize();
+			buffer = new byte[bufferSize];	
+		}
+
+		public void run() {
+
+			out = new ByteArrayOutputStream();
+			running = true;
+
+			while (running) {
+				int count = line.read(buffer, 0, buffer.length);
+				float level = calculatePCM(buffer);
+				System.out.println(level);
+
+				if (count > 0) {
+					out.write(buffer, 0, count);
+				}
+			}
+			line.stop();
+			line.close();
+		}
     }
-    
-    
-    /**
-     * Thread que calcula los PCM (Pulse Code Modulation) detectados desde el microfono mientras
-     * se esta grabando, y detiene la grabacion si detecta un silencio prolongado.
-     * @author Leandro Morrone
-     */
-    private class CheckSilenceThread implements Runnable {
+	
+	/**
+	 * Thread que reproduce el audio almacenado en el buffer.
+	 * @author Leandro Morrone
+	 */
+	private class PlayThread implements Runnable {
 
-    	private final static float MAX_8_BITS_SIGNED = Byte.MAX_VALUE;
-    	private final static float MAX_8_BITS_UNSIGNED = 0xff;
-    	private final static float MAX_16_BITS_SIGNED = Short.MAX_VALUE;
-    	private final static float MAX_16_BITS_UNSIGNED = 0xffff;
+		int bufferSize;
+		byte buffer[];
+		AudioInputStream ais;
+		SourceDataLine line;
+		
+		public PlayThread(AudioInputStream ais, SourceDataLine line) {
+			this.ais = ais;
+			this.line = line;
+			bufferSize = (int) format.getSampleRate() * format.getFrameSize();
+			buffer = new byte[bufferSize];
+		}
 
-    	AudioFormat	format = getAudioInputStream().getFormat();
-        int bufferSize = (int) format.getSampleRate() * format.getFrameSize();
-    	byte[] buffer = new byte[bufferSize];
-    	
-    	@Override
-    	public void run() {
-    		ByteArrayOutputStream out = new ByteArrayOutputStream();
-    		
-    		// Mientras este grabando, calculo los PCM
-    		/*while (getState() == CaptureState.PROCESSING_AUDIO) {
-    			int count = getTargetDataLine().read(buffer, 0, buffer.length);
-    			float level = calculatePCM();
-    			System.out.println(level + " - " + count);
-
-    			if (count > 0) {
-    				out.write(buffer, 0, count);
-    			}
-    		}*/
-    	}
-    	
-    	/**
-    	 * Calcula el nivel de PCM para un instante dado de la gabacion
-    	 * @return Nivel de PCM (Pulse Code Modulation)
-    	 * @author modificada por Leandro Morrone
-    	 */
-    	private float calculatePCM() {
-    		
-    		int max = 0;
-    		boolean use16Bit = (format.getSampleSizeInBits() == 16);
-    		boolean signed = (format.getEncoding() == AudioFormat.Encoding.PCM_SIGNED);
-    		boolean bigEndian = (format.isBigEndian());
-    		if (use16Bit) {
-    			for (int i = 0; i < buffer.length; i += 2) {
-    				int value = 0;
-    				int hiByte = (bigEndian ? buffer[i] : buffer[i + 1]);
-    				int loByte = (bigEndian ? buffer[i + 1] : buffer[i]);
-    				if (signed) {
-    					short shortVal = (short) hiByte;
-    					shortVal = (short) ((shortVal << 8) | (byte) loByte);
-    					value = shortVal;
-    				} else {
-    					value = (hiByte << 8) | loByte;
-    				}
-    				max = Math.max(max, value);
-    			}
-    		} else {
-    			for (int i = 0; i < buffer.length; i++) {
-    				int value = 0;
-    				if (signed) {
-    					value = buffer[i];
-    				} else {
-    					short shortVal = 0;
-    					shortVal = (short) (shortVal | buffer[i]);
-    					value = shortVal;
-    				}
-    				max = Math.max(max, value);
-    			}
-    		}
-    		if (signed) {
-    			if (use16Bit) {
-    				return (float) max / MAX_16_BITS_SIGNED;
-    			} else {
-    				return (float) max / MAX_8_BITS_SIGNED;
-    			}
-    		} else {
-    			if (use16Bit) {
-    				return (float) max / MAX_16_BITS_UNSIGNED;
-    			} else {
-    				return (float) max / MAX_8_BITS_UNSIGNED;
-    			}
-    		}
-    	}
-    	
+		public void run() {
+			try {
+				int count;
+				while ((count = ais.read(buffer, 0, buffer.length)) != -1) {
+					if (count > 0) {
+						line.write(buffer, 0, count);
+					}
+				}
+				line.drain();
+				line.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
     }
+	
+	
+	/**
+	 * Calcula el nivel de PCM para un instante dado de la grabacion.
+	 * @param buffer Contiene la ultima porcion del audio capturado
+	 * @return Nivel de PCM (Pulse Code Modulation) del audio del buffer
+	 */
+	private float calculatePCM(byte[] buffer) {
+		int max = 0;
+		boolean use16Bit = (format.getSampleSizeInBits() == 16);
+		boolean signed = (format.getEncoding() == AudioFormat.Encoding.PCM_SIGNED);
+		boolean bigEndian = (format.isBigEndian());
+		
+		if (use16Bit) {
+			for (int i = 0; i < buffer.length; i += 2) {
+				int value = 0;
+				int hiByte = (bigEndian ? buffer[i] : buffer[i + 1]);
+				int loByte = (bigEndian ? buffer[i + 1] : buffer[i]);
+				if (signed) {
+					short shortVal = (short) hiByte;
+					shortVal = (short) ((shortVal << 8) | (byte) loByte);
+					value = shortVal;
+				} else {
+					value = (hiByte << 8) | loByte;
+				}
+				max = Math.max(max, value);
+			}
+		} else {
+			for (int i = 0; i < buffer.length; i++) {
+				int value = 0;
+				if (signed) {
+					value = buffer[i];
+				} else {
+					short shortVal = 0;
+					shortVal = (short) (shortVal | buffer[i]);
+					value = shortVal;
+				}
+				max = Math.max(max, value);
+			}
+		}
+		// expreso el maximo valor de 8 o 16 bits como float entre 0.0 y 1.0
+		if (signed) {
+			if (use16Bit) {
+				return (float) max / MAX_16_BITS_SIGNED;
+			} else {
+				return (float) max / MAX_8_BITS_SIGNED;
+			}
+		} else {
+			if (use16Bit) {
+				return (float) max / MAX_16_BITS_UNSIGNED;
+			} else {
+				return (float) max / MAX_8_BITS_UNSIGNED;
+			}
+		}
+	}
+
 }
