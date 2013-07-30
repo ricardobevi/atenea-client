@@ -13,7 +13,8 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 public class Main {
 
 	/**
-	 * El main solo se encarga de instanciar el objeto Atenea utilizando spring.
+	 * El main se encarga de instanciar el objeto Atenea utilizando spring
+	 * y lanzar la interfaz principal del programa.
 	 * @param args
 	 * @author Leandro Morrone
 	 */
@@ -24,7 +25,8 @@ public class Main {
     			new ClassPathXmlApplicationContext(new String[] {"client-beans.xml"});
     	
     	// Instancio el programa e inyecto el cliente desde spring
-    	@SuppressWarnings("unused")
 		Atenea atenea = (Atenea)context.getBean("ateneabean");
+		// Lanzo la interfaz principal
+    	atenea.launchMainGUI();
     }
 }

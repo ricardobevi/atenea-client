@@ -13,16 +13,8 @@ import org.squadra.atenea.tts.MessageProcessor;
 public class RecognizeTextThread implements Runnable {
 
 	/** Objeto que contiene las variables de configuracion y estado del sistema */
-	private Atenea atenea;
+	private Atenea atenea = Atenea.getInstance();
 
-	/**
-	 * Constructor
-	 * @param atenea
-	 */
-	public RecognizeTextThread(Atenea atenea) {
-		this.atenea = atenea;
-	}
-	
 	@Override
 	public void run() {
 		
@@ -39,7 +31,7 @@ public class RecognizeTextThread implements Runnable {
 			outputMessage = new Message("No logro conectarme al servidor.", Message.ERROR);
 		}
 		
-		MessageProcessor.processMessage(atenea, outputMessage);
+		MessageProcessor.processMessage(outputMessage);
 	}
 
 }

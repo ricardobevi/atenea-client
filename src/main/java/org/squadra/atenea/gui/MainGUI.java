@@ -33,24 +33,21 @@ import org.squadra.atenea.stt.RecognizeVoiceThread;
 public class MainGUI extends JFrame {
 	
 	/** Objeto que contiene las variables de configuracion y estado del sistema */
-	private Atenea atenea;
+	private Atenea atenea = Atenea.getInstance();
 	
 	/** Singleton */
 	private static MainGUI INSTANCE = null;
 	
 	/**
 	 * Crea una instancia de la interfaz, y si ya existe la devuelve
-	 * @param atenea
 	 * @return instancia singleton de la interfaz principal
 	 * @author Leandro Morrone
 	 */
-	public static MainGUI createInstance(Atenea atenea) {
-		
+	public static MainGUI createInstance() {
 		if (INSTANCE == null) {
-			INSTANCE = new MainGUI(atenea);
+			INSTANCE = new MainGUI();
 		}
 		return INSTANCE;
-		
 	}
 	
 	/**
@@ -64,11 +61,9 @@ public class MainGUI extends JFrame {
 	
 	/**
 	 * Constructor privado: inicia la interfaz principal
-	 * @param atenea
 	 * @author Leandro Morrone
 	 */
-	private MainGUI(Atenea atenea) {
-		this.atenea = atenea;
+	private MainGUI() {
 		initComponents();
 	}
 	
@@ -89,6 +84,7 @@ public class MainGUI extends JFrame {
 	private JButton btnValorarMal;
 	private JButton btnEnviar;
 	private JButton btnGrabarDetener;
+	private JButton btnReproducir;
 	private JButton btnNuevoTermino;
 	private JButton btnNuevaAccion;
 	private JButton btnValorarRegular;
@@ -107,7 +103,7 @@ public class MainGUI extends JFrame {
 		}
 
 		// Seteo las propiedades de la ventana
-		this.setSize(new Dimension(486, 428));
+		this.setSize(new Dimension(486, 438));
 		this.setTitle("Atenea (Interfaz de prueba)");
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		this.setLocationRelativeTo(null);
@@ -131,11 +127,20 @@ public class MainGUI extends JFrame {
 			}
 		});
 		
+		btnReproducir = new JButton("Reproducir");
+		btnReproducir.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				btnReproducirAction(e);
+			}
+		});
+		
 		lblEstado = new JLabel("Estado del sistema:");
 		
-		txtEstado = new JTextField(atenea.getStateText());
+		txtEstado = new JTextField();
 		txtEstado.setEditable(false);
 		txtEstado.setColumns(10);
+		setTxtEstadoDelSistema(atenea.getStateText());
 		
 		lblEntradaTexto = new JLabel("Entrada de texto:");
 		
@@ -188,53 +193,57 @@ public class MainGUI extends JFrame {
 			groupLayout.createParallelGroup(Alignment.LEADING)
 				.addGroup(groupLayout.createSequentialGroup()
 					.addContainerGap()
-					.addGroup(groupLayout.createParallelGroup(Alignment.TRAILING)
-						.addGroup(groupLayout.createSequentialGroup()
-							.addGroup(groupLayout.createParallelGroup(Alignment.LEADING)
-								.addComponent(txtEstado, Alignment.TRAILING, GroupLayout.DEFAULT_SIZE, 458, Short.MAX_VALUE)
-								.addGroup(Alignment.TRAILING, groupLayout.createSequentialGroup()
-									.addComponent(txtEntradaAudio, GroupLayout.DEFAULT_SIZE, 337, Short.MAX_VALUE)
+					.addGroup(groupLayout.createParallelGroup(Alignment.LEADING)
+						.addGroup(Alignment.TRAILING, groupLayout.createSequentialGroup()
+							.addGroup(groupLayout.createParallelGroup(Alignment.TRAILING)
+								.addComponent(txtEstado, GroupLayout.DEFAULT_SIZE, 452, Short.MAX_VALUE)
+								.addGroup(groupLayout.createSequentialGroup()
+									.addComponent(txtEntradaAudio, GroupLayout.DEFAULT_SIZE, 331, Short.MAX_VALUE)
 									.addPreferredGap(ComponentPlacement.RELATED)
-									.addComponent(btnGrabarDetener))
-								.addGroup(Alignment.TRAILING, groupLayout.createSequentialGroup()
-									.addComponent(txtEntradaTexto, GroupLayout.DEFAULT_SIZE, 337, Short.MAX_VALUE)
+									.addGroup(groupLayout.createParallelGroup(Alignment.LEADING, false)
+										.addComponent(btnGrabarDetener, Alignment.TRAILING)
+										.addComponent(btnReproducir, GroupLayout.PREFERRED_SIZE, 115, GroupLayout.PREFERRED_SIZE))))
+							.addGap(8))
+						.addGroup(Alignment.TRAILING, groupLayout.createSequentialGroup()
+							.addComponent(lblEstado)
+							.addContainerGap(367, Short.MAX_VALUE))
+						.addGroup(Alignment.TRAILING, groupLayout.createSequentialGroup()
+							.addComponent(lblEntradaAudio)
+							.addContainerGap(374, Short.MAX_VALUE))
+						.addGroup(groupLayout.createSequentialGroup()
+							.addComponent(lblEntradaTexto)
+							.addContainerGap(374, Short.MAX_VALUE))
+						.addGroup(groupLayout.createSequentialGroup()
+							.addGroup(groupLayout.createParallelGroup(Alignment.TRAILING)
+								.addGroup(groupLayout.createSequentialGroup()
+									.addComponent(txtEntradaTexto, GroupLayout.DEFAULT_SIZE, 331, Short.MAX_VALUE)
 									.addPreferredGap(ComponentPlacement.RELATED)
 									.addComponent(btnEnviar, GroupLayout.PREFERRED_SIZE, 115, GroupLayout.PREFERRED_SIZE))
 								.addGroup(groupLayout.createSequentialGroup()
-									.addComponent(txtSalida, GroupLayout.PREFERRED_SIZE, 289, GroupLayout.PREFERRED_SIZE)
+									.addComponent(txtSalida, GroupLayout.DEFAULT_SIZE, 289, Short.MAX_VALUE)
 									.addPreferredGap(ComponentPlacement.RELATED)
 									.addComponent(btnValorarBien)
-									.addPreferredGap(ComponentPlacement.RELATED, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+									.addPreferredGap(ComponentPlacement.RELATED)
 									.addComponent(btnValorarRegular)
 									.addPreferredGap(ComponentPlacement.RELATED)
 									.addComponent(btnValorarMal))
 								.addGroup(groupLayout.createSequentialGroup()
-									.addGroup(groupLayout.createParallelGroup(Alignment.LEADING)
-										.addComponent(lblTiempoDeRespuesta)
-										.addComponent(txtTiempoDeRespuesta, 104, 104, 104))
-									.addGap(27)
-									.addGroup(groupLayout.createParallelGroup(Alignment.LEADING)
-										.addComponent(lblMetaData)
-										.addComponent(txtMetaData, GroupLayout.DEFAULT_SIZE, 323, Short.MAX_VALUE))
-									.addGap(4)))
+									.addComponent(btnNuevoTermino)
+									.addPreferredGap(ComponentPlacement.RELATED)
+									.addComponent(btnNuevaAccion)))
 							.addGap(8))
 						.addGroup(groupLayout.createSequentialGroup()
-							.addComponent(btnNuevoTermino)
-							.addPreferredGap(ComponentPlacement.RELATED)
-							.addComponent(btnNuevaAccion)
-							.addContainerGap())
-						.addGroup(groupLayout.createSequentialGroup()
-							.addComponent(lblEstado)
-							.addContainerGap(364, Short.MAX_VALUE))
-						.addGroup(groupLayout.createSequentialGroup()
-							.addComponent(lblEntradaAudio)
-							.addContainerGap(371, Short.MAX_VALUE))
-						.addGroup(groupLayout.createSequentialGroup()
-							.addComponent(lblEntradaTexto)
-							.addContainerGap(371, Short.MAX_VALUE))
-						.addGroup(groupLayout.createSequentialGroup()
 							.addComponent(lblSalida)
-							.addContainerGap(425, Short.MAX_VALUE))))
+							.addContainerGap(428, Short.MAX_VALUE))
+						.addGroup(groupLayout.createSequentialGroup()
+							.addGroup(groupLayout.createParallelGroup(Alignment.LEADING)
+								.addComponent(lblTiempoDeRespuesta)
+								.addComponent(txtTiempoDeRespuesta, 104, 104, 104))
+							.addGap(27)
+							.addGroup(groupLayout.createParallelGroup(Alignment.LEADING)
+								.addComponent(lblMetaData)
+								.addComponent(txtMetaData, GroupLayout.DEFAULT_SIZE, 317, Short.MAX_VALUE))
+							.addGap(12))))
 		);
 		groupLayout.setVerticalGroup(
 			groupLayout.createParallelGroup(Alignment.LEADING)
@@ -246,10 +255,13 @@ public class MainGUI extends JFrame {
 					.addPreferredGap(ComponentPlacement.RELATED)
 					.addComponent(lblEntradaAudio)
 					.addPreferredGap(ComponentPlacement.RELATED)
-					.addGroup(groupLayout.createParallelGroup(Alignment.TRAILING)
-						.addComponent(btnGrabarDetener, GroupLayout.PREFERRED_SIZE, 44, GroupLayout.PREFERRED_SIZE)
-						.addComponent(txtEntradaAudio, GroupLayout.PREFERRED_SIZE, 45, GroupLayout.PREFERRED_SIZE))
-					.addPreferredGap(ComponentPlacement.RELATED)
+					.addGroup(groupLayout.createParallelGroup(Alignment.LEADING, false)
+						.addGroup(groupLayout.createSequentialGroup()
+							.addComponent(btnGrabarDetener, GroupLayout.PREFERRED_SIZE, 42, GroupLayout.PREFERRED_SIZE)
+							.addPreferredGap(ComponentPlacement.RELATED, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+							.addComponent(btnReproducir))
+						.addComponent(txtEntradaAudio, Alignment.TRAILING, GroupLayout.PREFERRED_SIZE, 71, GroupLayout.PREFERRED_SIZE))
+					.addGap(6)
 					.addComponent(lblEntradaTexto)
 					.addPreferredGap(ComponentPlacement.RELATED)
 					.addGroup(groupLayout.createParallelGroup(Alignment.LEADING)
@@ -264,7 +276,7 @@ public class MainGUI extends JFrame {
 							.addComponent(btnValorarBien, GroupLayout.PREFERRED_SIZE, 44, GroupLayout.PREFERRED_SIZE)
 							.addComponent(btnValorarRegular, GroupLayout.PREFERRED_SIZE, 44, GroupLayout.PREFERRED_SIZE))
 						.addComponent(txtSalida, GroupLayout.PREFERRED_SIZE, 45, GroupLayout.PREFERRED_SIZE))
-					.addGap(18)
+					.addPreferredGap(ComponentPlacement.UNRELATED)
 					.addGroup(groupLayout.createParallelGroup(Alignment.BASELINE)
 						.addComponent(lblTiempoDeRespuesta)
 						.addComponent(lblMetaData))
@@ -273,10 +285,10 @@ public class MainGUI extends JFrame {
 						.addComponent(txtTiempoDeRespuesta, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
 						.addComponent(txtMetaData, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
 					.addGap(18)
-					.addGroup(groupLayout.createParallelGroup(Alignment.LEADING)
-						.addComponent(btnNuevaAccion, GroupLayout.DEFAULT_SIZE, 40, Short.MAX_VALUE)
-						.addComponent(btnNuevoTermino, GroupLayout.DEFAULT_SIZE, 40, Short.MAX_VALUE))
-					.addContainerGap())
+					.addGroup(groupLayout.createParallelGroup(Alignment.LEADING, false)
+						.addComponent(btnNuevaAccion, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+						.addComponent(btnNuevoTermino, GroupLayout.DEFAULT_SIZE, 32, Short.MAX_VALUE))
+					.addGap(19))
 		);
 		this.getContentPane().setLayout(groupLayout);
 		
@@ -311,10 +323,9 @@ public class MainGUI extends JFrame {
 			atenea.getMicrophone().stopRecording();
 			atenea.getMicrophone().generateAudioFile(atenea.getWaveFilePath(), 
 					AudioFileFormat.Type.WAVE);
-			new Thread(new RecognizeVoiceThread(atenea)).start();
+			new Thread(new RecognizeVoiceThread()).start();
 		}
 	}
-	
 	
 	/**
 	 * Si el sistema se encuentra en espera, envia el mensaje para que sea reconocido.
@@ -323,10 +334,22 @@ public class MainGUI extends JFrame {
 	protected void btnEnviarAction(MouseEvent e) {
 		if (atenea.getState() == AteneaState.WAITING) {
 			atenea.setState(AteneaState.PROCESSING);
-			new Thread(new RecognizeTextThread(atenea)).start();
+			new Thread(new RecognizeTextThread()).start();
 		}
 	}
-
+	
+	/**
+	 * Si el sistema se encuentra en espera, envia el mensaje para que sea reconocido.
+	 * @param e Evento capturado al hacer click sobre el boton Enviar
+	 */
+	protected void btnReproducirAction(MouseEvent e) {
+		if (atenea.getState() == AteneaState.WAITING) {
+			//atenea.setState(AteneaState.PLAYING);
+			atenea.getMicrophone().playRecording();
+			//atenea.setState(AteneaState.WAITING);
+		}
+	}
+	
 	// Funciones para setear y obtener el contenido de los campos de texto de la interfaz
 	
 	public void setTxtEstadoDelSistema(String text) {

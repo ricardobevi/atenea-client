@@ -1,7 +1,5 @@
 package org.squadra.atenea;
 
-import javax.sound.sampled.AudioFileFormat;
-
 import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
@@ -13,7 +11,8 @@ import org.squadra.atenea.ateneaws.AteneaWs;
 
 /**
  * Esta clase carga la configuracion del programa, contiene el estado del sistema y 
- * lanza la interfaz de usuario.
+ * lanza la interfaz de usuario. Es un singleton para que pueda ser llamada desde 
+ * cualquier parte del proyecto.
  * @author Leandro Morrone
  */
 public @Data class Atenea {
@@ -36,11 +35,35 @@ public @Data class Atenea {
 	/** Codigo de idioma para realizar la traduccion de voz a texto */
 	@Getter @Setter private String languageCode;
 	
+	/** Singleton */
+	private static Atenea INSTANCE = null;
+	
 	/**
-	 * Constructor: Carga la configuracion, inicializa las variables y lanza la GUI principal
+	 * Crea una instancia del objeto Atenea, y si ya existe la devuelve
+	 * @return instancia singleton de la interfaz principal
 	 * @author Leandro Morrone
 	 */
-	public Atenea() {
+	public static Atenea createInstance() {
+		if (INSTANCE == null) {
+			INSTANCE = new Atenea();
+		}
+		return INSTANCE;
+	}
+	
+	/**
+	 * Devuelve la instancia de Atenea
+	 * @return instancia singleton de la interfaz principal
+	 * @author Leandro Morrone
+	 */
+	public static Atenea getInstance() {
+		return INSTANCE;
+	}
+	
+	/**
+	 * Constructor privado: Carga la configuracion e inicializa las variables necesarias
+	 * @author Leandro Morrone
+	 */
+	private Atenea() {
 		
 		// ACA HAY QUE CARGAR LA CONFIGURACION DEL SISTEMA
 		waveFilePath = "./audioInput.wav";
@@ -48,8 +71,14 @@ public @Data class Atenea {
 		
 		this.state = new AteneaState();
 		this.microphone = new Microphone();
-		
-		MainGUI.createInstance(this);
+	}
+	
+	/**
+	 * Lanza la interfaz de usuario principal
+	 * @author Leandro Morrone
+	 */
+	public void launchMainGUI() {
+		MainGUI.createInstance();
 	}
 
 	/**

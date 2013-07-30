@@ -16,15 +16,7 @@ import org.squadra.atenea.tts.MessageProcessor;
 public class RecognizeVoiceThread implements Runnable {
 
 	/** Objeto que contiene las variables de configuracion y estado del sistema */
-	private Atenea atenea;
-
-	/**
-	 * Constructor
-	 * @param atenea
-	 */
-	public RecognizeVoiceThread(Atenea atenea) {
-		this.atenea = atenea;
-	}
+	private Atenea atenea = Atenea.getInstance();
 
 	@Override
 	public void run() {
@@ -72,7 +64,7 @@ public class RecognizeVoiceThread implements Runnable {
 			}
 		} 
 	
-		MessageProcessor.processMessage(atenea, outputMessage);
+		MessageProcessor.processMessage(outputMessage);
 		
 	}
 }
