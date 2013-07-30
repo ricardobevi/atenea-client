@@ -311,19 +311,10 @@ public class MainGUI extends JFrame {
 	 */
 	private void btnGrabarDetenerAction(MouseEvent e) {
 		if (atenea.getState() == AteneaState.WAITING) {
-			try {
-				atenea.setState(AteneaState.RECORDING);
-				atenea.getMicrophone().startRecording();
-			} catch (Exception e1) {
-				System.out.println("Error al grabar archivo de audio");
-			}
+			atenea.getMicrophone().startRecording();
 		}
 		else if (atenea.getState() == AteneaState.RECORDING) {
-			atenea.setState(AteneaState.PROCESSING);
-			atenea.getMicrophone().stopRecording();
-			atenea.getMicrophone().generateAudioFile(atenea.getWaveFilePath(), 
-					AudioFileFormat.Type.WAVE);
-			new Thread(new RecognizeVoiceThread()).start();
+			atenea.getMicrophone().stopRecordingAndRecognize();
 		}
 	}
 	
@@ -344,9 +335,7 @@ public class MainGUI extends JFrame {
 	 */
 	protected void btnReproducirAction(MouseEvent e) {
 		if (atenea.getState() == AteneaState.WAITING) {
-			//atenea.setState(AteneaState.PLAYING);
 			atenea.getMicrophone().playRecording();
-			//atenea.setState(AteneaState.WAITING);
 		}
 	}
 	

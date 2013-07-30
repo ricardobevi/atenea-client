@@ -2,7 +2,10 @@ package org.squadra.atenea.stt;
 
 import javax.sound.sampled.*;
 
+import org.squadra.atenea.Atenea;
+
 import java.io.*;
+import java.util.ArrayList;
 
 /**
  * Clase que contiene los metodos para capturar audio del microfono, reproducirlo y grabar
@@ -13,7 +16,7 @@ import java.io.*;
  * 
  * @author Leandro Morrone
  */
-public class Microphone {
+public class AudioRecorder {
 
 	/** Variable que indica si se esta capturando audio del microfono */
 	private boolean running;
@@ -33,7 +36,7 @@ public class Microphone {
 	/**
 	 * Constructor.
 	 */
-	public Microphone() {
+	public AudioRecorder() {
 		this.format = getFormat();
 	}
 
@@ -137,12 +140,22 @@ public class Microphone {
 
 			out = new ByteArrayOutputStream();
 			running = true;
+			ArrayList<Float> lastPCMs = new ArrayList<Float>();
 
 			while (running) {
 				int count = line.read(buffer, 0, buffer.length);
+				
+				// Calculo los PCM de la ultima muestra capturada
 				float level = calculatePCM(buffer);
-				System.out.println(level);
-
+				System.out.println("PCM: " + level);
+				lastPCMs.add(level);
+				
+				// Si se detecta silencio detengo la grabacion de voz
+				if (silenceDetected(lastPCMs)) {
+					System.out.println("============== SILENCIO =============");
+					Atenea.getInstance().getMicrophone().stopRecordingAndRecognize();
+				}
+				
 				if (count > 0) {
 					out.write(buffer, 0, count);
 				}
@@ -153,39 +166,32 @@ public class Microphone {
     }
 	
 	/**
-	 * Thread que reproduce el audio almacenado en el buffer.
-	 * @author Leandro Morrone
+	 * Verifica si hay un silencio prolongado.
+	 * @param lastPCMs array con los ultimos PCM calculados.
+	 * @return true si se considera silencio prolongado o false si no.
 	 */
-	private class PlayThread implements Runnable {
-
-		int bufferSize;
-		byte buffer[];
-		AudioInputStream ais;
-		SourceDataLine line;
+	private boolean silenceDetected(ArrayList<Float> lastPCMs) {
 		
-		public PlayThread(AudioInputStream ais, SourceDataLine line) {
-			this.ais = ais;
-			this.line = line;
-			bufferSize = (int) format.getSampleRate() * format.getFrameSize();
-			buffer = new byte[bufferSize];
-		}
-
-		public void run() {
-			try {
-				int count;
-				while ((count = ais.read(buffer, 0, buffer.length)) != -1) {
-					if (count > 0) {
-						line.write(buffer, 0, count);
-					}
-				}
-				line.drain();
-				line.close();
-			} catch (IOException e) {
-				e.printStackTrace();
+		if(lastPCMs.size() > 3) {
+			// Mantengo el array de PCMs de tamaño fijo (simulo una cola circular)
+			lastPCMs.remove(0);
+			
+			// Calculo el promedio de los ultimos PCM
+			float sum = 0;
+			for(int i = 0; i < lastPCMs.size(); i++) {
+				sum += lastPCMs.get(i);
+			}
+			float average = sum / lastPCMs.size();
+			System.out.println("Promedio: " + average);
+			
+			// Si el promedio es bajo se considera que hay silencio prolongado
+			// El silencio "absoluto" es aprox 0.01, pero por el ruido se considera 0.04
+			if(average < 0.04) {
+				return true;
 			}
 		}
-    }
-	
+		return false;
+	}
 	
 	/**
 	 * Calcula el nivel de PCM para un instante dado de la grabacion.
@@ -241,4 +247,39 @@ public class Microphone {
 		}
 	}
 
+	
+	/**
+	 * Thread que reproduce el audio almacenado en el buffer.
+	 * @author Leandro Morrone
+	 */
+	private class PlayThread implements Runnable {
+
+		int bufferSize;
+		byte buffer[];
+		AudioInputStream ais;
+		SourceDataLine line;
+		
+		public PlayThread(AudioInputStream ais, SourceDataLine line) {
+			this.ais = ais;
+			this.line = line;
+			bufferSize = (int) format.getSampleRate() * format.getFrameSize();
+			buffer = new byte[bufferSize];
+		}
+
+		public void run() {
+			try {
+				int count;
+				while ((count = ais.read(buffer, 0, buffer.length)) != -1) {
+					if (count > 0) {
+						line.write(buffer, 0, count);
+					}
+				}
+				line.drain();
+				line.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+    }
+	
 }
