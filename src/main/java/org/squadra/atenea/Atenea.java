@@ -4,10 +4,10 @@ import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 
+import org.squadra.atenea.ateneacommunication.AteneaWs;
 import org.squadra.atenea.gui.MainGUI;
 import org.squadra.atenea.stt.Microphone;
 import org.squadra.atenea.util.StaticMethods;
-import org.squadra.atenea.ateneacommunication.AteneaWs;
 
 
 /**

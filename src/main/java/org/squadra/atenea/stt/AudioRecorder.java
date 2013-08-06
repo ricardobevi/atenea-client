@@ -1,11 +1,22 @@
 package org.squadra.atenea.stt;
 
-import javax.sound.sampled.*;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.ArrayList;
+
+import javax.sound.sampled.AudioFileFormat;
+import javax.sound.sampled.AudioFormat;
+import javax.sound.sampled.AudioInputStream;
+import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.DataLine;
+import javax.sound.sampled.LineUnavailableException;
+import javax.sound.sampled.SourceDataLine;
+import javax.sound.sampled.TargetDataLine;
 
 import org.squadra.atenea.Atenea;
-
-import java.io.*;
-import java.util.ArrayList;
 
 /**
  * Clase que contiene los metodos para capturar audio del microfono, reproducirlo y grabar
@@ -173,7 +184,7 @@ public class AudioRecorder {
 	private boolean silenceDetected(ArrayList<Float> lastPCMs) {
 		
 		if(lastPCMs.size() > 3) {
-			// Mantengo el array de PCMs de tamaño fijo (simulo una cola circular)
+			// Mantengo el array de PCMs de tamaï¿½o fijo (simulo una cola circular)
 			lastPCMs.remove(0);
 			
 			// Calculo el promedio de los ultimos PCM

@@ -9,6 +9,7 @@ import static com.googlecode.javacv.cpp.opencv_core.cvSize;
 import static com.googlecode.javacv.cpp.opencv_highgui.cvLoadImage;
 import static com.googlecode.javacv.cpp.opencv_imgproc.CV_TM_SQDIFF;
 import static com.googlecode.javacv.cpp.opencv_imgproc.cvMatchTemplate;
+
 import java.awt.AWTException;
 import java.awt.HeadlessException;
 import java.awt.Rectangle;
@@ -20,7 +21,9 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+
 import javax.imageio.ImageIO;
+
 import com.googlecode.javacv.cpp.opencv_core.CvPoint;
 import com.googlecode.javacv.cpp.opencv_core.CvScalar;
 import com.googlecode.javacv.cpp.opencv_core.IplImage;

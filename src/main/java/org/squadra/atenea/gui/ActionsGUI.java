@@ -1,15 +1,20 @@
 package org.squadra.atenea.gui;
 
-import javax.swing.*;
+import java.awt.BorderLayout;
+import java.awt.Checkbox;
+import java.awt.CheckboxGroup;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
+
 import org.jnativehook.GlobalScreen;
 import org.jnativehook.NativeHookException;
 import org.squadra.atenea.actions.Executer;
 import org.squadra.atenea.actions.MouseEventHandler;
-
-import java.awt.*;
-import java.awt.event.*;
-import java.awt.Checkbox;
-import java.awt.CheckboxGroup;
 
 /*
  * Clase que genera la UI 
