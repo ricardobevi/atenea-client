@@ -3,7 +3,7 @@ package org.squadra.atenea.tts;
 import org.squadra.atenea.Atenea;
 import org.squadra.atenea.AteneaState;
 import org.squadra.atenea.actions.Command;
-import org.squadra.atenea.aiengine.Message;
+import org.squadra.atenea.ateneacommunication.Message;
 import org.squadra.atenea.gui.MainGUI;
 
 /**

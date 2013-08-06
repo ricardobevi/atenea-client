@@ -3,7 +3,7 @@ package org.squadra.atenea.stt;
 import java.io.IOException;
 
 import org.squadra.atenea.Atenea;
-import org.squadra.atenea.aiengine.Message;
+import org.squadra.atenea.ateneacommunication.Message;
 import org.squadra.atenea.exceptions.GoogleTTSException;
 import org.squadra.atenea.gui.MainGUI;
 import org.squadra.atenea.tts.MessageProcessor;
@@ -39,11 +39,11 @@ public class RecognizeVoiceThread implements Runnable {
 			e.printStackTrace();
 			responseOk = false;
 		} catch (IOException e) {
-			outputMessage = new Message("Tuve un problema interno, ¿podrías repetirmelo?.", Message.ERROR);
+			outputMessage = new Message("Tuve un problema interno, ï¿½podrï¿½as repetirmelo?.", Message.ERROR);
 			e.printStackTrace();
 			responseOk = false;
 		} catch (Exception e) {
-			outputMessage = new Message("Disculpa, ¿podrías hablar un poco más alto?", Message.ERROR);
+			outputMessage = new Message("Disculpa, ï¿½podrï¿½as hablar un poco mï¿½s alto?", Message.ERROR);
 			e.printStackTrace();
 			responseOk = false;
 		}	
