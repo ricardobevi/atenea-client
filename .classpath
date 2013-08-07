@@ -17,13 +17,6 @@
 			<attribute name="maven.pomderived" value="true"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="JavaFlacEncoder-0.3.0.jar"/>
-	<classpathentry kind="lib" path="JLayer-1.0.1.jar"/>
-	<classpathentry kind="lib" path="javacpp.jar"/>
-	<classpathentry kind="lib" path="javacv-windows-x86_64.jar"/>
-	<classpathentry kind="lib" path="javacv-windows-x86.jar"/>
-	<classpathentry kind="lib" path="javacv.jar"/>
-	<classpathentry kind="lib" path="JNativeHook.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.7">
 		<attributes>
 			<attribute name="maven.pomderived" value="true"/>
