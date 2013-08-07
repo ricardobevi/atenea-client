@@ -22,13 +22,19 @@
 	<dependencies>
 
 		<!-- Dependencias de Squadra Corp -->
-
+		
+		<dependency>
+		  <groupId>org.squadra.atenea</groupId>
+		  <artifactId>AteneaCommunication</artifactId>
+		  <version>0.0.1-SNAPSHOT</version>
+		</dependency>
+		
+				
 		<dependency>
 			<groupId>org.squadra.atenea</groupId>
-			<artifactId>AteneaWs</artifactId>
+			<artifactId>AteneaBase</artifactId>
 			<version>0.0.1-SNAPSHOT</version>
 		</dependency>
-
 
 		<dependency>
 			<groupId>net.javazoom</groupId>
@@ -43,25 +49,6 @@
 		</dependency>
 
 
-		<!-- SPRING DEPENDENCIES -->
-		<dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-context</artifactId>
-			<version>3.1.2.RELEASE</version>
-		</dependency>
-
-		<dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-web</artifactId>
-			<version>3.1.2.RELEASE</version>
-		</dependency>
-
-		<dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-test</artifactId>
-			<version>3.1.2.RELEASE</version>
-			<scope>test</scope>
-		</dependency>
 
 		<!-- CXF DEPENDENCIES -->
 		<dependency>
@@ -88,28 +75,6 @@
 			<version>${cxf.version}</version>
 		</dependency>
 
-		<!-- JUNIT DEPENDENCY -->
-		<dependency>
-			<groupId>junit</groupId>
-			<artifactId>junit</artifactId>
-			<version>4.10</version>
-		</dependency>
-
-
-		<dependency>
-			<groupId>log4j</groupId>
-			<artifactId>log4j</artifactId>
-			<version>1.2.16</version>
-		</dependency>
-
-
-		<dependency>
-			<groupId>org.projectlombok</groupId>
-			<artifactId>lombok</artifactId>
-			<version>0.11.6</version>
-			<type>jar</type>
-		</dependency>
-
 		<dependency>
 			<groupId>net.java.dev.jna</groupId>
 			<artifactId>jna</artifactId>
@@ -127,7 +92,6 @@
 <!-- 			<version>0.3</version> -->
 <!-- 		</dependency> -->
 
-	</dependencies>
 
 <!-- 	<repositories> -->
 <!-- 		<repository> -->
@@ -136,5 +100,8 @@
 <!-- 			<url>http://maven2.javacv.googlecode.com/git/</url> -->
 <!-- 		</repository> -->
 <!-- 	</repositories> -->
+
+	</dependencies>
+
 
 </project>
