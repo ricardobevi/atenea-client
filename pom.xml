@@ -22,119 +22,88 @@
 	<dependencies>
 
 		<!-- Dependencias de Squadra Corp -->
-		
+
 		<dependency>
-		  <groupId>org.squadra.atenea</groupId>
-		  <artifactId>AteneaCommunication</artifactId>
-		  <version>0.0.1-SNAPSHOT</version>
+			<groupId>org.squadra.atenea</groupId>
+			<artifactId>AteneaCommunication</artifactId>
+			<version>0.0.1-SNAPSHOT</version>
 		</dependency>
-		
-				
+
+
 		<dependency>
 			<groupId>org.squadra.atenea</groupId>
 			<artifactId>AteneaBase</artifactId>
 			<version>0.0.1-SNAPSHOT</version>
 		</dependency>
 
-		<!-- Dependencias externas   -->
+		<!-- Dependencias externas -->
+
+		<dependency>
+			<groupId>org.squadra.atenea.externaljar</groupId>
+			<artifactId>javacpp</artifactId>
+			<version>0.0.1-SNAPSHOT</version>
+		</dependency>
 		
 		<dependency>
-	         <groupId>org.squadra.atenea</groupId>
-	         <artifactId>javacpp</artifactId>
-	         <scope>system</scope>
-	         <version>1.0</version>
-	         <systemPath>${basedir}\src\main\resources\lib\javacpp.jar</systemPath>
-	    </dependency>
+			<groupId>org.squadra.atenea.externaljar</groupId>
+			<artifactId>javacv</artifactId>
+			<version>0.0.1-SNAPSHOT</version>
+		</dependency>
 		
 		<dependency>
-	         <groupId>org.squadra.atenea</groupId>
-	         <artifactId>javacv-windows-x86_64</artifactId>
-	         <scope>system</scope>
-	         <version>1.0</version>
-	         <systemPath>${basedir}\src\main\resources\lib\javacv-windows-x86_64.jar</systemPath>
-	    </dependency>
-
+			<groupId>org.squadra.atenea.externaljar</groupId>
+			<artifactId>javacv-windows-x86</artifactId>
+			<version>0.0.1-SNAPSHOT</version>
+		</dependency>
+		
 		<dependency>
-	         <groupId>org.squadra.atenea</groupId>
-	         <artifactId>javacv-windows-x86</artifactId>
-	         <scope>system</scope>
-	         <version>1.0</version>
-	         <systemPath>${basedir}\src\main\resources\lib\javacv-windows-x86.jar</systemPath>
-	    </dependency>
-	    
+			<groupId>org.squadra.atenea.externaljar</groupId>
+			<artifactId>javacv-windows-x64</artifactId>
+			<version>0.0.1-SNAPSHOT</version>
+		</dependency>
+		
 		<dependency>
-	         <groupId>org.squadra.atenea</groupId>
-	         <artifactId>javacv</artifactId>
-	         <scope>system</scope>
-	         <version>1.0</version>
-	         <systemPath>${basedir}\src\main\resources\lib\javacv.jar</systemPath>
-	    </dependency>	    
-	    
+			<groupId>org.squadra.atenea.externaljar</groupId>
+			<artifactId>JavaFlacEncoder</artifactId>
+			<version>0.0.1-SNAPSHOT</version>
+		</dependency>
+		
 		<dependency>
-	         <groupId>org.squadra.atenea</groupId>
-	         <artifactId>JavaFlacEncoder-0.3.0</artifactId>
-	         <scope>system</scope>
-	         <version>1.0</version>
-	         <systemPath>${basedir}\src\main\resources\lib\JavaFlacEncoder-0.3.0.jar</systemPath>
-	    </dependency>	
-
-	    
+			<groupId>org.squadra.atenea.externaljar</groupId>
+			<artifactId>JLayer</artifactId>
+			<version>0.0.1-SNAPSHOT</version>
+		</dependency>
+		
 		<dependency>
-	         <groupId>org.squadra.atenea</groupId>
-	         <artifactId>JLayer-1.0.1</artifactId>
-	         <scope>system</scope>
-	         <version>1.0</version>
-	         <systemPath>${basedir}\src\main\resources\lib\JLayer-1.0.1.jar</systemPath>
-	    </dependency>	
-	    	      	    
+			<groupId>org.squadra.atenea.externaljar</groupId>
+			<artifactId>JNativeHook</artifactId>
+			<version>0.0.1-SNAPSHOT</version>
+		</dependency>
+		
 		<dependency>
-	         <groupId>org.squadra.atenea</groupId>
-	         <artifactId>JNativeHook</artifactId>
-	         <scope>system</scope>
-	         <version>1.0</version>
-	         <systemPath>${basedir}\src\main\resources\lib\JNativeHook.jar</systemPath>
-	    </dependency>		    	      	    
-
+			<groupId>org.squadra.atenea.externaljar</groupId>
+			<artifactId>opencv-linux-x86</artifactId>
+			<version>0.0.1-SNAPSHOT</version>
+		</dependency>
+		
 		<dependency>
-	         <groupId>org.squadra.atenea</groupId>
-	         <artifactId>opencv-2.4.5-linux-x86_64</artifactId>
-	         <scope>system</scope>
-	         <version>1.0</version>
-	         <systemPath>${basedir}\src\main\resources\lib\opencv-2.4.5-linux-x86_64.jar</systemPath>
-	    </dependency>	
-
+			<groupId>org.squadra.atenea.externaljar</groupId>
+			<artifactId>opencv-linux-x64</artifactId>
+			<version>0.0.1-SNAPSHOT</version>
+		</dependency>
+		
 		<dependency>
-	         <groupId>org.squadra.atenea</groupId>
-	         <artifactId>opencv-2.4.5-linux-x86</artifactId>
-	         <scope>system</scope>
-	         <version>1.0</version>
-	         <systemPath>${basedir}\src\main\resources\lib\opencv-2.4.5-linux-x86.jar</systemPath>
-	    </dependency>	
-
+			<groupId>org.squadra.atenea.externaljar</groupId>
+			<artifactId>opencv-windows-x86</artifactId>
+			<version>0.0.1-SNAPSHOT</version>
+		</dependency>
+		
 		<dependency>
-	         <groupId>org.squadra.atenea</groupId>
-	         <artifactId>opencv-2.4.5-linux-x86</artifactId>
-	         <scope>system</scope>
-	         <version>1.0</version>
-	         <systemPath>${basedir}\src\main\resources\lib\opencv-2.4.5-linux-x86.jar</systemPath>
-	    </dependency>	
-	    
-		<dependency>
-	         <groupId>org.squadra.atenea</groupId>
-	         <artifactId>opencv-2.4.5-windows-x86_64</artifactId>
-	         <scope>system</scope>
-	         <version>1.0</version>
-	         <systemPath>${basedir}\src\main\resources\lib\opencv-2.4.5-windows-x86_64.jar</systemPath>
-	    </dependency>	
-	    
-		<dependency>
-	         <groupId>org.squadra.atenea</groupId>
-	         <artifactId>opencv-2.4.5-windows-x86</artifactId>
-	         <scope>system</scope>
-	         <version>1.0</version>
-	         <systemPath>${basedir}\src\main\resources\lib\opencv-2.4.5-windows-x86.jar</systemPath>
-	    </dependency>			    	    	    
-
+			<groupId>org.squadra.atenea.externaljar</groupId>
+			<artifactId>opencv-windows-x64</artifactId>
+			<version>0.0.1-SNAPSHOT</version>
+		</dependency>
+ 		
 		<!-- CXF DEPENDENCIES -->
 		<dependency>
 			<groupId>org.apache.cxf</groupId>
@@ -160,7 +129,7 @@
 			<version>${cxf.version}</version>
 		</dependency>
 
-		<!-- No se quien lo agrego, no se que hace  -->
+		<!-- No se quien lo agrego, no se que hace -->
 		<dependency>
 			<groupId>net.java.dev.jna</groupId>
 			<artifactId>jna</artifactId>
