@@ -4,6 +4,7 @@ import org.squadra.atenea.Atenea;
 import org.squadra.atenea.AteneaState;
 import org.squadra.atenea.actions.Command;
 import org.squadra.atenea.ateneacommunication.Message;
+import org.squadra.atenea.gui.MainGUI;
 import org.squadra.atenea.gui.MainGUIPrototype;
 
 /**
@@ -26,15 +27,17 @@ public class MessageProcessor {
 			processOrder(message.getOrder());
 		}
 		
+		String outputText = message.getText();
+		
 		// Muestro por pantalla el mensaje de salida
-		MainGUIPrototype.getInstance().setTxtSalida(message.getText());
+		MainGUI.getInstance().setTxtOutput(outputText);
+		//MainGUIPrototype.getInstance().setTxtSalida(outputText);
 		
 		// Reproduzco el mensaje mostrado
 		Atenea.getInstance().setState(AteneaState.PLAYING);
 		try {
-			PlayTextMessage.play(MainGUIPrototype.getInstance().getTxtSalida());
+			PlayTextMessage.play(outputText);
 		} catch (Exception e) {
-			MainGUIPrototype.getInstance().setTxtSalida("No logro conectarme a Internet.");
 			e.printStackTrace();
 		}
 		Atenea.getInstance().setState(AteneaState.WAITING);

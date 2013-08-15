@@ -2,7 +2,7 @@ package org.squadra.atenea.stt;
 
 import org.squadra.atenea.Atenea;
 import org.squadra.atenea.ateneacommunication.Message;
-import org.squadra.atenea.gui.MainGUIPrototype;
+import org.squadra.atenea.gui.MainGUI;
 import org.squadra.atenea.tts.MessageProcessor;
 
 /**
@@ -18,7 +18,8 @@ public class RecognizeTextThread implements Runnable {
 	@Override
 	public void run() {
 		
-		String textMessage = MainGUIPrototype.getInstance().getTxtEntradaTexto();
+		//String textMessage = MainGUIPrototype.getInstance().getTxtEntradaTexto();
+		String textMessage = MainGUI.getInstance().getTxtInput();
 		Message outputMessage = new Message();
 		
 		try {
