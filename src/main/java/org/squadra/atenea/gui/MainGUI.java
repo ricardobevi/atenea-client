@@ -615,7 +615,7 @@ public class MainGUI extends JFrame {
 	 * Abre la pantalla de historial en el navegador web por defecto.
 	 */
 	protected void historyButtonMouseClicked() {
-		// TODO Auto-generated method stub
+		new HistoryGUI();
 	}
 
 	

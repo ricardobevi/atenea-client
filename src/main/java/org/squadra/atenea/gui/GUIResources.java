@@ -13,7 +13,7 @@ import javax.swing.ImageIcon;
  */
 public class GUIResources {
 
-	private static final String BASE_PATH = "./src/main/resources/";
+	private static final String BASE_PATH = "src/main/resources/";
 	
 	public static class Images {
 
@@ -194,6 +194,25 @@ public class GUIResources {
 			public static final ImageIcon light_grey = new ImageIcon(BUTTON_PATH + "input_light_grey.png");
 		}
 		
+	}
+
+	public static class HistoryElements {
+		
+		public static class Images {
+			
+			private static final String IMAGES_PATH = BASE_PATH + "history/history_icons/";
+			
+			public static final String input_message = IMAGES_PATH + "input_message.png";
+			public static final String output_message = IMAGES_PATH + "output_message.png";
+			public static final String output_action = IMAGES_PATH + "output_action.png";
+			public static final String output_error = IMAGES_PATH + "output_error.png";
+			public static final String input_action = IMAGES_PATH + "input_action.png";
+			public static final String unknown = IMAGES_PATH + "unknown.png";
+		}
+		
+		public static final String cssPath = BASE_PATH + "history/history.css";
+		public static final String htmlPath = BASE_PATH + "history/history.html";
+		public static final String jsonPath = BASE_PATH + "history/history.json";
 	}
 	
 	public static enum Colors {
