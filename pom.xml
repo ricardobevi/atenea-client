@@ -129,6 +129,13 @@
 			<version>${cxf.version}</version>
 		</dependency>
 
+		<!-- Tiene funciones de encoding de texto (ej HTML) -->
+		<dependency>
+			<groupId>commons-lang</groupId>
+			<artifactId>commons-lang</artifactId>
+			<version>2.6</version>
+		</dependency>
+            
 		<!-- No se quien lo agrego, no se que hace -->
 		<dependency>
 			<groupId>net.java.dev.jna</groupId>

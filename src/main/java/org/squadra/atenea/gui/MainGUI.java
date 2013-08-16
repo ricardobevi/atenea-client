@@ -79,7 +79,7 @@ public class MainGUI extends JFrame {
 	private Point startLoc;
 	
 	// Color actual de la interfaz
-	private GUIResources.Colors guiColor = GUIResources.Colors.GREEN;
+	private Resources.Colors guiColor = Resources.Colors.GREEN;
 	private boolean mainButtonOver = false;
 	
 	// Indica si el programa esta en modo de entrada de texto o audio.
@@ -125,7 +125,7 @@ public class MainGUI extends JFrame {
 		setUndecorated(true);
 		setSize(547, 184);
 		setBackground(new Color(0,0,0,0));
-		setIconImage(GUIResources.Images.ateneaIcon);
+		setIconImage(Resources.Images.ateneaIcon);
 		setLocationRelativeTo(null);
 		setVisible(true);
 		setResizable(false);
@@ -134,7 +134,7 @@ public class MainGUI extends JFrame {
 		//========================== BACKGROUND ============================= 
 		
 		lblBackground = new JLabel();
-		lblBackground.setIcon(GUIResources.Images.Backgrounds.main);
+		lblBackground.setIcon(Resources.Images.Backgrounds.main);
 		lblBackground.setBounds(0, 0, 
 				lblBackground.getIcon().getIconWidth(), 
 				lblBackground.getIcon().getIconHeight());
@@ -155,7 +155,7 @@ public class MainGUI extends JFrame {
 		//=================== BOTON CENTRAL PRINCIPAL =======================
 		
 		lblMainButton = new JLabel();
-		lblMainButton.setIcon(GUIResources.Images.MainButton.getByColor(guiColor));
+		lblMainButton.setIcon(Resources.Images.MainButton.getByColor(guiColor));
 		lblMainButton.setBounds(85, 24, 
 				lblMainButton.getIcon().getIconWidth(), 
 				lblMainButton.getIcon().getIconHeight());
@@ -164,24 +164,24 @@ public class MainGUI extends JFrame {
 			@Override
             public void mouseClicked(java.awt.event.MouseEvent evt) {
 				if (SwingUtilities.isLeftMouseButton(evt)) {
-					lblMainButton.setIcon(GUIResources.Images.MainButton.getByLightColor(guiColor));
+					lblMainButton.setIcon(Resources.Images.MainButton.getByLightColor(guiColor));
 	            	mainButtonMouseClicked();
 				}
             }
 			@Override
             public void mouseEntered(java.awt.event.MouseEvent evt) {
-				lblMainButton.setIcon(GUIResources.Images.MainButton.getByLightColor(guiColor));
+				lblMainButton.setIcon(Resources.Images.MainButton.getByLightColor(guiColor));
 				mainButtonOver = true;
             }
 			@Override
             public void mouseExited(java.awt.event.MouseEvent evt) {
-				lblMainButton.setIcon(GUIResources.Images.MainButton.getByColor(guiColor));
+				lblMainButton.setIcon(Resources.Images.MainButton.getByColor(guiColor));
 				mainButtonOver = true;
             }
 			@Override
             public void mousePressed(java.awt.event.MouseEvent evt) {
 				if (SwingUtilities.isLeftMouseButton(evt)) {
-					lblMainButton.setIcon(GUIResources.Images.MainButton.getByColor(guiColor));
+					lblMainButton.setIcon(Resources.Images.MainButton.getByColor(guiColor));
 				}
             }
         });
@@ -189,7 +189,7 @@ public class MainGUI extends JFrame {
 		//====================== BOTON PARA CERRAR ==========================
 		
 		lblCloseButton = new JLabel();
-		lblCloseButton.setIcon(GUIResources.Images.CloseButton.grey);
+		lblCloseButton.setIcon(Resources.Images.CloseButton.grey);
 		lblCloseButton.setToolTipText("Cerrar");
 		lblCloseButton.setBounds(503, 33, 
 				lblCloseButton.getIcon().getIconWidth(), 
@@ -204,18 +204,18 @@ public class MainGUI extends JFrame {
             }
 			@Override
             public void mouseEntered(java.awt.event.MouseEvent evt) {
-				lblCloseButton.setIcon(GUIResources.Images.CloseButton.getByColor(guiColor));
+				lblCloseButton.setIcon(Resources.Images.CloseButton.getByColor(guiColor));
             }
 			@Override
             public void mouseExited(java.awt.event.MouseEvent evt) {
-				lblCloseButton.setIcon(GUIResources.Images.CloseButton.grey);
+				lblCloseButton.setIcon(Resources.Images.CloseButton.grey);
             }
         });
 		
 		//===================== BOTON PARA MINIMIZAR ========================
 		
 		lblMinimizeButton = new JLabel();
-		lblMinimizeButton.setIcon(GUIResources.Images.MinimizeButton.grey);
+		lblMinimizeButton.setIcon(Resources.Images.MinimizeButton.grey);
 		lblMinimizeButton.setToolTipText("Minimizar");
 		lblMinimizeButton.setBounds(503, 64, 
 				lblMinimizeButton.getIcon().getIconWidth(), 
@@ -230,11 +230,11 @@ public class MainGUI extends JFrame {
             }
 			@Override
             public void mouseEntered(java.awt.event.MouseEvent evt) {
-				lblMinimizeButton.setIcon(GUIResources.Images.MinimizeButton.getByColor(guiColor));
+				lblMinimizeButton.setIcon(Resources.Images.MinimizeButton.getByColor(guiColor));
             }
 			@Override
             public void mouseExited(java.awt.event.MouseEvent evt) {
-				lblMinimizeButton.setIcon(GUIResources.Images.MinimizeButton.grey);
+				lblMinimizeButton.setIcon(Resources.Images.MinimizeButton.grey);
             }
         });
 		
@@ -255,7 +255,7 @@ public class MainGUI extends JFrame {
 			trayMenu.add(item3);
 			
 			// Creo el icono y le agrego maximizacion haciendo doble click
-			trayIcon = new TrayIcon(GUIResources.Images.ateneaIcon, "Atenea", trayMenu);
+			trayIcon = new TrayIcon(Resources.Images.ateneaIcon, "Atenea", trayMenu);
 			trayIcon.setImageAutoSize(true);
 			trayIcon.addMouseListener(new java.awt.event.MouseAdapter() {
 				@Override
@@ -296,7 +296,7 @@ public class MainGUI extends JFrame {
 		//==================== BOTON DE CONFIGURACION =======================
 		
 		lblSettingButton = new JLabel();
-		lblSettingButton.setIcon(GUIResources.Images.SettingButton.grey);
+		lblSettingButton.setIcon(Resources.Images.SettingButton.grey);
 		lblSettingButton.setToolTipText("Configuración");
 		lblSettingButton.setBounds(503, 95, 
 				lblSettingButton.getIcon().getIconWidth(), 
@@ -311,18 +311,18 @@ public class MainGUI extends JFrame {
             }
 			@Override
             public void mouseEntered(java.awt.event.MouseEvent evt) {
-				lblSettingButton.setIcon(GUIResources.Images.SettingButton.getByColor(guiColor));
+				lblSettingButton.setIcon(Resources.Images.SettingButton.getByColor(guiColor));
             }
 			@Override
             public void mouseExited(java.awt.event.MouseEvent evt) {
-				lblSettingButton.setIcon(GUIResources.Images.SettingButton.grey);
+				lblSettingButton.setIcon(Resources.Images.SettingButton.grey);
             }
         });
 		
 		//======================== BOTON DE AYUDA ===========================
 		
 		lblHelpButton = new JLabel();
-		lblHelpButton.setIcon(GUIResources.Images.HelpButton.grey);
+		lblHelpButton.setIcon(Resources.Images.HelpButton.grey);
 		lblHelpButton.setToolTipText("Ayuda");
 		lblHelpButton.setBounds(503, 126, 
 				lblHelpButton.getIcon().getIconWidth(), 
@@ -337,18 +337,18 @@ public class MainGUI extends JFrame {
             }
 			@Override
             public void mouseEntered(java.awt.event.MouseEvent evt) {
-				lblHelpButton.setIcon(GUIResources.Images.HelpButton.getByColor(guiColor));
+				lblHelpButton.setIcon(Resources.Images.HelpButton.getByColor(guiColor));
             }
 			@Override
             public void mouseExited(java.awt.event.MouseEvent evt) {
-				lblHelpButton.setIcon(GUIResources.Images.HelpButton.grey);
+				lblHelpButton.setIcon(Resources.Images.HelpButton.grey);
             }
         });
 		
 		//================== BOTON DE ENSEÑAR ACCIONES ======================
 		
 		lblActionsButton = new JLabel();
-		lblActionsButton.setIcon(GUIResources.Images.ActionsButton.grey);
+		lblActionsButton.setIcon(Resources.Images.ActionsButton.grey);
 		lblActionsButton.setToolTipText("Enseñar acción");
 		lblActionsButton.setBounds(19, 33, 
 				lblActionsButton.getIcon().getIconWidth(), 
@@ -363,18 +363,18 @@ public class MainGUI extends JFrame {
             }
 			@Override
             public void mouseEntered(java.awt.event.MouseEvent evt) {
-				lblActionsButton.setIcon(GUIResources.Images.ActionsButton.light_grey);
+				lblActionsButton.setIcon(Resources.Images.ActionsButton.light_grey);
             }
 			@Override
             public void mouseExited(java.awt.event.MouseEvent evt) {
-				lblActionsButton.setIcon(GUIResources.Images.ActionsButton.grey);
+				lblActionsButton.setIcon(Resources.Images.ActionsButton.grey);
             }
         });
 		
 		//================= BOTON DE CALIFICAR RESPUESTA ====================
 		
 		lblRateButton = new JLabel();
-		lblRateButton.setIcon(GUIResources.Images.RateButton.grey);
+		lblRateButton.setIcon(Resources.Images.RateButton.grey);
 		lblRateButton.setToolTipText("Calificar respuesta");
 		lblRateButton.setBounds(19, 95, 
 				lblRateButton.getIcon().getIconWidth(), 
@@ -389,18 +389,18 @@ public class MainGUI extends JFrame {
             }
 			@Override
             public void mouseEntered(java.awt.event.MouseEvent evt) {
-				lblRateButton.setIcon(GUIResources.Images.RateButton.light_grey);
+				lblRateButton.setIcon(Resources.Images.RateButton.light_grey);
             }
 			@Override
             public void mouseExited(java.awt.event.MouseEvent evt) {
-				lblRateButton.setIcon(GUIResources.Images.RateButton.grey);
+				lblRateButton.setIcon(Resources.Images.RateButton.grey);
             }
         });
 		
 		//========= BOTON PARA CAMBIAR A ENTRADA POR TECLADO/VOZ ============
 		
 		lblInputButton = new JLabel();
-		lblInputButton.setIcon(GUIResources.Images.InputButton.grey);
+		lblInputButton.setIcon(Resources.Images.InputButton.grey);
 		lblInputButton.setToolTipText("Cambiar modo de entrada");
 		lblInputButton.setBounds(215, 33, 
 				lblInputButton.getIcon().getIconWidth(), 
@@ -415,12 +415,12 @@ public class MainGUI extends JFrame {
             }
 			@Override
             public void mouseEntered(java.awt.event.MouseEvent evt) {
-				lblInputButton.setIcon(GUIResources.Images.InputButton.light_grey);
+				lblInputButton.setIcon(Resources.Images.InputButton.light_grey);
 				txtAreaLight(cpInput, true);
             }
 			@Override
             public void mouseExited(java.awt.event.MouseEvent evt) {
-				lblInputButton.setIcon(GUIResources.Images.InputButton.grey);
+				lblInputButton.setIcon(Resources.Images.InputButton.grey);
 				txtAreaLight(cpInput, false);
             }
         });
@@ -428,7 +428,7 @@ public class MainGUI extends JFrame {
 		//=================== BOTON PARA VER HISTORIAL ======================
 		
 		lblHistoryButton = new JLabel();
-		lblHistoryButton.setIcon(GUIResources.Images.HistoryButton.grey);
+		lblHistoryButton.setIcon(Resources.Images.HistoryButton.grey);
 		lblHistoryButton.setToolTipText("Historial");
 		lblHistoryButton.setBounds(215, 95, 
 				lblHistoryButton.getIcon().getIconWidth(), 
@@ -443,12 +443,12 @@ public class MainGUI extends JFrame {
             }
 			@Override
             public void mouseEntered(java.awt.event.MouseEvent evt) {
-				lblHistoryButton.setIcon(GUIResources.Images.HistoryButton.light_grey);
+				lblHistoryButton.setIcon(Resources.Images.HistoryButton.light_grey);
 				txtAreaLight(cpOutput, true);
             }
 			@Override
             public void mouseExited(java.awt.event.MouseEvent evt) {
-				lblHistoryButton.setIcon(GUIResources.Images.HistoryButton.grey);
+				lblHistoryButton.setIcon(Resources.Images.HistoryButton.grey);
 				txtAreaLight(cpOutput, false);
             }
         });
@@ -470,12 +470,12 @@ public class MainGUI extends JFrame {
 		txtInput.addMouseListener(new java.awt.event.MouseAdapter() {
 			@Override
             public void mouseEntered(java.awt.event.MouseEvent evt) {
-				lblInputButton.setIcon(GUIResources.Images.InputButton.light_grey);
+				lblInputButton.setIcon(Resources.Images.InputButton.light_grey);
 				txtAreaLight(cpInput, true);
             }
 			@Override
             public void mouseExited(java.awt.event.MouseEvent evt) {
-				lblInputButton.setIcon(GUIResources.Images.InputButton.grey);
+				lblInputButton.setIcon(Resources.Images.InputButton.grey);
 				txtAreaLight(cpInput, false);
             }
         });
@@ -497,12 +497,12 @@ public class MainGUI extends JFrame {
 		txtOutput.addMouseListener(new java.awt.event.MouseAdapter() {
 			@Override
             public void mouseEntered(java.awt.event.MouseEvent evt) {
-				lblHistoryButton.setIcon(GUIResources.Images.HistoryButton.light_grey);
+				lblHistoryButton.setIcon(Resources.Images.HistoryButton.light_grey);
 				txtAreaLight(cpOutput, true);
             }
 			@Override
             public void mouseExited(java.awt.event.MouseEvent evt) {
-				lblHistoryButton.setIcon(GUIResources.Images.HistoryButton.grey);
+				lblHistoryButton.setIcon(Resources.Images.HistoryButton.grey);
 				txtAreaLight(cpOutput, false);
             }
         });
@@ -676,29 +676,29 @@ public class MainGUI extends JFrame {
 	public void changeGUIByState(int state) {
 		switch (state) {
 			case AteneaState.WAITING: 
-				guiColor = GUIResources.Colors.GREEN;
+				guiColor = Resources.Colors.GREEN;
 				break;
 			case AteneaState.RECORDING: 
-				guiColor = GUIResources.Colors.RED;
+				guiColor = Resources.Colors.RED;
 				break;
 			case AteneaState.PROCESSING: 
-				guiColor = GUIResources.Colors.YELLOW;
+				guiColor = Resources.Colors.YELLOW;
 				break;
 			case AteneaState.PLAYING: 
-				guiColor = GUIResources.Colors.ORANGE;
+				guiColor = Resources.Colors.ORANGE;
 				break;
 			case AteneaState.LEARNING: 
-				guiColor = GUIResources.Colors.BLUE;
+				guiColor = Resources.Colors.BLUE;
 				break;
 			default:
-				guiColor = GUIResources.Colors.YELLOW;
+				guiColor = Resources.Colors.YELLOW;
 		}
 		if (mainButtonOver) {
-			lblMainButton.setIcon(GUIResources.Images.MainButton.getByLightColor(guiColor));
+			lblMainButton.setIcon(Resources.Images.MainButton.getByLightColor(guiColor));
 			//TODO: cambiar los colores del trayIcon
 		}
 		else {
-			lblMainButton.setIcon(GUIResources.Images.MainButton.getByColor(guiColor));
+			lblMainButton.setIcon(Resources.Images.MainButton.getByColor(guiColor));
 		}
 		setTitle("Atenea - " + Atenea.getInstance().getStateText());
 	}

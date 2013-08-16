@@ -11,7 +11,7 @@ import javax.swing.ImageIcon;
  * @author Leandro Morrone
  *
  */
-public class GUIResources {
+public class Resources {
 
 	private static final String BASE_PATH = "src/main/resources/";
 	
@@ -200,7 +200,7 @@ public class GUIResources {
 		
 		public static class Images {
 			
-			private static final String IMAGES_PATH = BASE_PATH + "history/history_icons/";
+			private static final String IMAGES_PATH = "history_icons/";
 			
 			public static final String input_message = IMAGES_PATH + "input_message.png";
 			public static final String output_message = IMAGES_PATH + "output_message.png";
@@ -213,6 +213,13 @@ public class GUIResources {
 		public static final String cssPath = BASE_PATH + "history/history.css";
 		public static final String htmlPath = BASE_PATH + "history/history.html";
 		public static final String jsonPath = BASE_PATH + "history/history.json";
+	}
+	
+	public static class Audio {
+		
+		private static final String AUDIO_PATH = BASE_PATH + "audio/";
+
+		public static final String inputVoicePath = AUDIO_PATH + "inputVoice.wav";
 	}
 	
 	public static enum Colors {

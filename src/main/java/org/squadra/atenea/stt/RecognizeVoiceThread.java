@@ -1,6 +1,7 @@
 package org.squadra.atenea.stt;
 
 import java.io.IOException;
+import java.util.Date;
 
 import lombok.extern.log4j.Log4j;
 
@@ -9,6 +10,7 @@ import org.squadra.atenea.ateneacommunication.Message;
 import org.squadra.atenea.exceptions.GoogleTTSException;
 import org.squadra.atenea.gui.MainGUI;
 import org.squadra.atenea.gui.MainGUIPrototype;
+import org.squadra.atenea.history.HistoryItem;
 import org.squadra.atenea.tts.MessageProcessor;
 
 /**
@@ -37,6 +39,12 @@ public class RecognizeVoiceThread implements Runnable {
 					.getResponse();
 			//MainGUIPrototype.getInstance().setTxtEntradaAudio(googleResponse);
 			MainGUI.getInstance().setTxtInput(googleResponse);
+			
+			// Agrego un item al historial
+			Atenea.getInstance().getHistory().addItem(new HistoryItem(
+							Atenea.getInstance().getUser(), 
+							HistoryItem.INPUT_VOICE_MESSAGE,
+							googleResponse, new Date()));
 			
 		} catch (GoogleTTSException e) {
 			outputMessage = new Message("No logro conectarme a Internet.", Message.ERROR);

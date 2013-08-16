@@ -1,8 +1,11 @@
 package org.squadra.atenea.stt;
 
+import java.util.Date;
+
 import org.squadra.atenea.Atenea;
 import org.squadra.atenea.ateneacommunication.Message;
 import org.squadra.atenea.gui.MainGUI;
+import org.squadra.atenea.history.HistoryItem;
 import org.squadra.atenea.tts.MessageProcessor;
 
 /**
@@ -20,6 +23,13 @@ public class RecognizeTextThread implements Runnable {
 		
 		//String textMessage = MainGUIPrototype.getInstance().getTxtEntradaTexto();
 		String textMessage = MainGUI.getInstance().getTxtInput();
+		
+		// Agrego un item al historial
+		Atenea.getInstance().getHistory().addItem(new HistoryItem(
+						Atenea.getInstance().getUser(), 
+						HistoryItem.INPUT_TEXT_MESSAGE,
+						textMessage, new Date()));
+		
 		Message outputMessage = new Message();
 		
 		try {

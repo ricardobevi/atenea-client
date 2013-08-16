@@ -1,11 +1,14 @@
 package org.squadra.atenea.tts;
 
+import java.util.Date;
+
 import org.squadra.atenea.Atenea;
 import org.squadra.atenea.AteneaState;
 import org.squadra.atenea.actions.Command;
 import org.squadra.atenea.ateneacommunication.Message;
 import org.squadra.atenea.gui.MainGUI;
 import org.squadra.atenea.gui.MainGUIPrototype;
+import org.squadra.atenea.history.HistoryItem;
 
 /**
  * Clase que se encarga de procesar el mensaje retornado por el servidor. Actua segun
@@ -32,6 +35,27 @@ public class MessageProcessor {
 		// Muestro por pantalla el mensaje de salida
 		MainGUI.getInstance().setTxtOutput(outputText);
 		//MainGUIPrototype.getInstance().setTxtSalida(outputText);
+		
+		// Agrego un item al historial
+		
+		if(message.getType() == Message.ERROR) {
+			Atenea.getInstance().getHistory().addItem(new HistoryItem(
+						"Atenea", 
+						HistoryItem.OUTPUT_ERROR,
+						outputText, new Date()));
+		}
+		else if (message.getType() == Message.ORDER) {
+			Atenea.getInstance().getHistory().addItem(new HistoryItem(
+						"Atenea", 
+						HistoryItem.OUTPUT_ACTION,
+						outputText, new Date()));
+		}
+		else {
+			Atenea.getInstance().getHistory().addItem(new HistoryItem(
+						"Atenea", 
+						HistoryItem.OUTPUT_MESSAGE,
+						outputText, new Date()));
+		}
 		
 		// Reproduzco el mensaje mostrado
 		Atenea.getInstance().setState(AteneaState.PLAYING);

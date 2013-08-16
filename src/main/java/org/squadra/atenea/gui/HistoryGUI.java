@@ -11,6 +11,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Locale;
 
+
+import org.apache.commons.lang.StringEscapeUtils;
 //import org.apache.commons.lang3.StringEscapeUtils;
 import org.squadra.atenea.history.History;
 import org.squadra.atenea.history.HistoryItem;
@@ -31,7 +33,7 @@ public class HistoryGUI {
 	public HistoryGUI() {
 		
 		//TODO: borrar esto porque hay que utilizar el que ya esta cargado en Atenea
-		History history = new History(GUIResources.HistoryElements.jsonPath);
+		History history = new History(Resources.HistoryElements.jsonPath);
 		history.loadHistoryFile();
 		
 		String html 
@@ -65,7 +67,7 @@ public class HistoryGUI {
 			if (!dateShortStr.equals(datePrev)) {
 				DateFormat dfDateFull = new SimpleDateFormat("dd - MMMM - yyyy", new Locale("es", "ES"));
 				String dateFullStr = (dfDateFull.format(item.getDate())).replace("-", "de");
-				html += "<tr><td colspan='4' class='date_full'>" + dateFullStr + "</td></tr>";
+				html += "<tr><td colspan='6' class='date_full'>" + dateFullStr + "</td></tr>";
 				datePrev = dateShortStr;
 			}
 			
@@ -79,31 +81,31 @@ public class HistoryGUI {
 			// Obtengo el tipo y la imagen correspondiente.
 			switch (item.getType()) {
 				case HistoryItem.INPUT_TEXT_MESSAGE:
-					image = GUIResources.HistoryElements.Images.input_message;
+					image = Resources.HistoryElements.Images.input_message;
 					typeStr = "Mensaje de texto";
 					break;
 				case HistoryItem.INPUT_VOICE_MESSAGE:
-					image = GUIResources.HistoryElements.Images.input_message;
+					image = Resources.HistoryElements.Images.input_message;
 					typeStr = "Mensaje de voz";
 					break;
 				case HistoryItem.OUTPUT_MESSAGE:
-					image = GUIResources.HistoryElements.Images.output_message;
+					image = Resources.HistoryElements.Images.output_message;
 					typeStr = "Respuesta";
 					break;
 				case HistoryItem.OUTPUT_ACTION:
-					image = GUIResources.HistoryElements.Images.output_action;
+					image = Resources.HistoryElements.Images.output_action;
 					typeStr = "Ejecutar acción";
 					break;
 				case HistoryItem.OUTPUT_ERROR:
-					image = GUIResources.HistoryElements.Images.output_error;
+					image = Resources.HistoryElements.Images.output_error;
 					typeStr = "Problema";
 					break;
 				case HistoryItem.INPUT_ACTION:
-					image = GUIResources.HistoryElements.Images.input_action;
+					image = Resources.HistoryElements.Images.input_action;
 					typeStr = "Enseñar acción";
 					break;
 				default:
-					image = GUIResources.HistoryElements.Images.unknown;
+					image = Resources.HistoryElements.Images.unknown;
 					typeStr = "Desconocido";
 					break;
 			}
@@ -111,13 +113,12 @@ public class HistoryGUI {
 			// Imprimo la columna del item de historial en el HTML.
 			html 
 			 += "<tr class='item'>"
-	          + "	<td width='8%'>" + timeStr + "</td>"
-	          + "	<td width='11%' class='date_short'>" + dateShortStr + "</td>"
-	          + "	<td width='4%'><img src='" + image + "' alt='' /></td>"
-	         // + "	<td width='19%'>[" + StringEscapeUtils.escapeHtml4(typeStr) + "]</td>"
-	         // + "   <td width='58%'>" + StringEscapeUtils.escapeHtml4(item.getMessage()) + "</td>"
-	          + "	<td width='19%'>[" + typeStr + "]</td>"
-	          + "   <td width='58%'>" + item.getMessage() + "</td>"
+	          + "	<td width='7%'>" + timeStr + "</td>"
+	          + "	<td width='10%' class='date_short'>" + dateShortStr + "</td>"
+	          + "	<td width='3%'><img src='" + image + "' alt='' /></td>"
+	          + "	<td width='17%'>[" + StringEscapeUtils.escapeHtml(typeStr) + "]</td>"
+	          + "   <td width='53%'>" + StringEscapeUtils.escapeHtml(item.getMessage()) + "</td>"
+	          + "   <td width='10%'>" + item.getUser() + "</td>"
 	          + "</tr>";
 		}
 		
@@ -129,7 +130,7 @@ public class HistoryGUI {
 		
 		// Creo o re-escribo el archivo HTML.
 		try {
-			File file = new File(GUIResources.HistoryElements.htmlPath);
+			File file = new File(Resources.HistoryElements.htmlPath);
 	        if (!file.exists()) {
 	            file.createNewFile();
 	        }
@@ -143,7 +144,7 @@ public class HistoryGUI {
 		// TODO: probar si el archivo no existe o esta vacio.
 		// Abro el archivo HTML generado con el navegador por defecto.
 		try {
-			File historyFile = new File(GUIResources.HistoryElements.htmlPath);
+			File historyFile = new File(Resources.HistoryElements.htmlPath);
 			Desktop.getDesktop().open(historyFile);
 		} catch (IOException e) {
 			System.out.println("Error al abrir archivo HTML.");
