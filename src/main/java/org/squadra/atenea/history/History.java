@@ -8,6 +8,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import lombok.extern.log4j.Log4j;
+
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
@@ -18,6 +20,7 @@ import com.google.gson.GsonBuilder;
  * @author Leandro Morrone
  *
  */
+@Log4j
 public class History {
 
 	/** Lista para almacenar todos los items de historial */
@@ -81,14 +84,14 @@ public class History {
 			try {
 				this.historyItems = tempHistory.getHistoryItems();
 			} catch (NullPointerException e) {
-				System.out.println("Archivo vacio.");
+				log.debug("Archivo de historial vacio.");
 			}
 			br.close();
 			
-			System.out.println(this);
+			//System.out.println(this);
 	 
 		} catch (IOException e) {
-			System.out.println("Error al cargar archivo.");
+			log.error("Error al cargar archivo de historial.");
 			e.printStackTrace();
 		}
 	}
@@ -103,7 +106,7 @@ public class History {
 		
 		// Convierto el objeto History a formato Json
 		String json = gson.toJson(this);
-		System.out.println(json);
+		//System.out.println(json);
 	 
 		try {
 			// Valido si existe el archivo, sino lo creo
@@ -118,7 +121,7 @@ public class History {
 			writer.close();
 	 
 		} catch (IOException e) {
-			System.out.println("Error al escribir archivo.");
+			log.error("Error al escribir archivo de historial.");
 			e.printStackTrace();
 		}
 	}

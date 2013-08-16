@@ -12,6 +12,9 @@ import java.util.Collections;
 import java.util.Locale;
 
 
+
+import lombok.extern.log4j.Log4j;
+
 import org.apache.commons.lang.StringEscapeUtils;
 //import org.apache.commons.lang3.StringEscapeUtils;
 import org.squadra.atenea.history.History;
@@ -23,6 +26,7 @@ import org.squadra.atenea.history.HistoryItemComparator;
  * @author Leandro
  *
  */
+@Log4j
 public class HistoryGUI {
 	
 	/**
@@ -138,7 +142,7 @@ public class HistoryGUI {
 			bw.write(html);
 			bw.close();
 		} catch (IOException e) {
-			System.out.println("Error al escribir archivo HTML.");
+			log.error("Error al escribir archivo HTML.");
 			e.printStackTrace();
 		}
 		// TODO: probar si el archivo no existe o esta vacio.
@@ -147,7 +151,7 @@ public class HistoryGUI {
 			File historyFile = new File(Resources.HistoryElements.htmlPath);
 			Desktop.getDesktop().open(historyFile);
 		} catch (IOException e) {
-			System.out.println("Error al abrir archivo HTML.");
+			log.error("Error al abrir archivo HTML.");
 			e.printStackTrace();
 		}
 	}

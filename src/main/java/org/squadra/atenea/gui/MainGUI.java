@@ -23,6 +23,7 @@ import javax.swing.border.LineBorder;
 
 import org.squadra.atenea.Atenea;
 import org.squadra.atenea.AteneaState;
+import org.squadra.atenea.stt.RecognizeTextThread;
 
 /**
  * Interfaz de usuario principal del programa.
@@ -36,11 +37,6 @@ public class MainGUI extends JFrame {
 	
 	/** Objeto que contiene las variables de configuracion y estado del sistema */
 	private Atenea atenea = Atenea.getInstance();
-	
-	//TODO: borrar
-	public static void main(String[] args) {
-		new MainGUI();
-	}
 	
 	/** Singleton */
 	private static MainGUI INSTANCE = null;
@@ -81,9 +77,6 @@ public class MainGUI extends JFrame {
 	// Color actual de la interfaz
 	private Resources.Colors guiColor = Resources.Colors.GREEN;
 	private boolean mainButtonOver = false;
-	
-	// Indica si el programa esta en modo de entrada de texto o audio.
-	private boolean inputTextMode = false;
 	
 	// Elementos swing de la interfaz de usuario
 	private JLabel lblBackground;
@@ -401,7 +394,7 @@ public class MainGUI extends JFrame {
 		
 		lblInputButton = new JLabel();
 		lblInputButton.setIcon(Resources.Images.InputButton.grey);
-		lblInputButton.setToolTipText("Cambiar modo de entrada");
+		lblInputButton.setToolTipText("Enviar texto");
 		lblInputButton.setBounds(215, 33, 
 				lblInputButton.getIcon().getIconWidth(), 
 				lblInputButton.getIcon().getIconHeight());
@@ -460,8 +453,6 @@ public class MainGUI extends JFrame {
 		txtInput.setLineWrap(true);
 		txtInput.setWrapStyleWord(true);
 		txtInput.setMargin(new Insets(3, 5, 3, 5));
-		txtInput.setBackground(new Color(240, 240, 240));
-		txtInput.setEditable(false);
 		cpInput = new JScrollPane();
 		cpInput.setBorder(new LineBorder(new Color(175, 175, 175), 4));
 		cpInput.setViewportView(txtInput);
@@ -599,14 +590,10 @@ public class MainGUI extends JFrame {
 	 * Cambia el modo de entrada de voz a teclado y viceversa
 	 */
 	protected void inputButtonMouseClicked() {
-		if (inputTextMode) {
-			inputTextMode = false;
-			txtInput.setBackground(new Color(240, 240, 240));
-			txtInput.setEditable(false);
-		} else {
-			inputTextMode = true;
-			txtInput.setBackground(Color.WHITE);
-			txtInput.setEditable(true);
+		// TODO Este boton por ahora envia texto, pero hay que cambiarlo
+		if (atenea.getState() == AteneaState.WAITING) {
+			atenea.setState(AteneaState.PROCESSING);
+			new Thread(new RecognizeTextThread()).start();
 		}
 	}
 	
@@ -693,12 +680,22 @@ public class MainGUI extends JFrame {
 			default:
 				guiColor = Resources.Colors.YELLOW;
 		}
+		
 		if (mainButtonOver) {
 			lblMainButton.setIcon(Resources.Images.MainButton.getByLightColor(guiColor));
 			//TODO: cambiar los colores del trayIcon
 		}
 		else {
 			lblMainButton.setIcon(Resources.Images.MainButton.getByColor(guiColor));
+		}
+		
+		if (state == AteneaState.WAITING) {
+			txtInput.setBackground(Color.WHITE);
+			txtInput.setEditable(true);
+		}
+		else {
+			txtInput.setBackground(new Color(240, 240, 240));
+			txtInput.setEditable(false);
 		}
 		setTitle("Atenea - " + Atenea.getInstance().getStateText());
 	}
