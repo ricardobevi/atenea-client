@@ -78,19 +78,16 @@ public class AudioRecorder {
 
 	/**
 	 * Inicia la grabacion de voz por el microfono.
+	 * @throws LineUnavailableException No se detectaron microfonos.
 	 */
-	public void startRecording() {
-		try {
-			final AudioFormat format = getFormat();
-			DataLine.Info info = new DataLine.Info(TargetDataLine.class, format);
-			final TargetDataLine line = (TargetDataLine) AudioSystem.getLine(info);
-			line.open(format);
-			line.start();
-			// llamo al hilo que captura audio y lo guarda en un buffer
-			new Thread(new CaptureThread(line)).start();
-		} catch (LineUnavailableException e) {
-			e.printStackTrace();
-		}
+	public void startRecording() throws LineUnavailableException {
+		final AudioFormat format = getFormat();
+		DataLine.Info info = new DataLine.Info(TargetDataLine.class, format);
+		final TargetDataLine line = (TargetDataLine) AudioSystem.getLine(info);
+		line.open(format);
+		line.start();
+		// llamo al hilo que captura audio y lo guarda en un buffer
+		new Thread(new CaptureThread(line)).start();
 	}
 	
 	/**
