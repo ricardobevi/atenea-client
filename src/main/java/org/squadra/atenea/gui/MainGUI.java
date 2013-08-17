@@ -8,6 +8,8 @@ import java.awt.Point;
 import java.awt.PopupMenu;
 import java.awt.SystemTray;
 import java.awt.TrayIcon;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowStateListener;
@@ -239,13 +241,48 @@ public class MainGUI extends JFrame {
 			
 			// Creo el menu contextual y agrego los items
 			trayMenu = new PopupMenu();
-			//TODO: agregar acciones a los items
-			MenuItem item1 = new MenuItem("Item 1");
-			MenuItem item2 = new MenuItem("Item 2");
-			MenuItem item3 = new MenuItem("Item 3");
+			
+			MenuItem item1 = new MenuItem("Grabar mensaje");
+			item1.addActionListener(new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					mainButtonMouseClicked();
+				}
+			});
+			MenuItem item2 = new MenuItem("Configuración");
+			item2.addActionListener(new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					settingButtonMouseClicked();
+				}
+			});
+			MenuItem item3 = new MenuItem("Ayuda");
+			item3.addActionListener(new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					helpButtonMouseClicked();
+				}
+			});
+			MenuItem item4 = new MenuItem("Maximizar");
+			item4.addActionListener(new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					maximizeButtonMouseClicked();
+				}
+			});
+			MenuItem item5 = new MenuItem("Cerrar");
+			item5.addActionListener(new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					closeButtonMouseClicked();
+				}
+			});
 			trayMenu.add(item1);
+			trayMenu.addSeparator();
 			trayMenu.add(item2);
 			trayMenu.add(item3);
+			trayMenu.add(item4);
+			trayMenu.add(item5);
 			
 			// Creo el icono y le agrego maximizacion haciendo doble click
 			trayIcon = new TrayIcon(Resources.Images.ateneaIcon, "Atenea", trayMenu);
@@ -254,31 +291,9 @@ public class MainGUI extends JFrame {
 				@Override
 	            public void mouseClicked(java.awt.event.MouseEvent evt) {
 					if (evt.getClickCount() >= 2) {
-						setVisible(true);
-						setExtendedState(JFrame.NORMAL);
+						maximizeButtonMouseClicked();
 					}
 	            }
-			});
-			
-			// Cuando la aplicacion cambia a estado minimizado, agrego el icono
-			// a la barra de tareas, si se maximiza lo remuevo.
-			this.addWindowStateListener(new WindowStateListener() {
-				public void windowStateChanged(WindowEvent e) {
-					if (e.getNewState() == JFrame.ICONIFIED || 
-						e.getNewState() == 7) {
-						try {
-							tray.add(trayIcon);
-							setVisible(false);
-						} catch (AWTException ex) {
-							ex.printStackTrace();
-						}
-					} 
-					else if (e.getNewState() == JFrame.NORMAL || 
-						e.getNewState()==JFrame.MAXIMIZED_BOTH) {
-						tray.remove(trayIcon);
-						setVisible(true);
-					}
-				}
 			});
 		} 
 		else {
@@ -540,7 +555,7 @@ public class MainGUI extends JFrame {
 	 * Cierra el programa.
 	 */
 	protected void closeButtonMouseClicked() {
-		dispose();
+		System.exit(0);
 	}
 	
 	/**
@@ -548,7 +563,24 @@ public class MainGUI extends JFrame {
 	 * Minimiza la aplicacion, creando un icono en la barra de tareas.
 	 */
 	protected void minimizeButtonMouseClicked() {
+		try {
+			tray.add(trayIcon);
+		} catch (AWTException e) {
+			e.printStackTrace();
+		}
+		setVisible(false);
 		setExtendedState(JFrame.ICONIFIED);
+	}
+	
+	/**
+	 * Se ejecuta presionando sobre el icono de la barra de tareas o 
+	 * el item de maximizar del menu.
+	 * Maximiza la aplicacion.
+	 */
+	protected void maximizeButtonMouseClicked() {
+		tray.remove(trayIcon);
+		setVisible(true);
+		setExtendedState(JFrame.NORMAL);
 	}
 	
 	/**
@@ -664,9 +696,11 @@ public class MainGUI extends JFrame {
 		switch (state) {
 			case AteneaState.WAITING: 
 				guiColor = Resources.Colors.GREEN;
+				trayMenu.getItem(0).setLabel("Grabar mensaje");
 				break;
 			case AteneaState.RECORDING: 
 				guiColor = Resources.Colors.RED;
+				trayMenu.getItem(0).setLabel("Detener grabación");
 				break;
 			case AteneaState.PROCESSING: 
 				guiColor = Resources.Colors.YELLOW;
@@ -683,11 +717,11 @@ public class MainGUI extends JFrame {
 		
 		if (mainButtonOver) {
 			lblMainButton.setIcon(Resources.Images.MainButton.getByLightColor(guiColor));
-			//TODO: cambiar los colores del trayIcon
 		}
 		else {
 			lblMainButton.setIcon(Resources.Images.MainButton.getByColor(guiColor));
 		}
+		//TODO: cambiar los colores del trayIcon
 		
 		if (state == AteneaState.WAITING) {
 			txtInput.setBackground(Color.WHITE);

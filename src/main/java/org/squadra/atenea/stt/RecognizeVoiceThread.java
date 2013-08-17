@@ -37,30 +37,36 @@ public class RecognizeVoiceThread implements Runnable {
 			googleResponse = recognizer
 					.getRecognizedDataForWave(atenea.getWaveFilePath(), atenea.getLanguageCode())
 					.getResponse();
-			//MainGUIPrototype.getInstance().setTxtEntradaAudio(googleResponse);
-			MainGUI.getInstance().setTxtInput(googleResponse);
-			
-			// Agrego un item al historial
-			Atenea.getInstance().getHistory().addItem(new HistoryItem(
-							Atenea.getInstance().getUser(), 
-							HistoryItem.INPUT_VOICE_MESSAGE,
-							googleResponse, new Date()));
+			if (googleResponse == null) {
+				throw new Exception();
+			}
 			
 		} catch (GoogleTTSException e) {
 			outputMessage = new Message("No logro conectarme a Internet.", Message.ERROR);
 			e.printStackTrace();
+			log.error("Error al conectarse a Internet");
 			responseOk = false;
 		} catch (IOException e) {
 			outputMessage = new Message("Tuve un problema interno, podrías repetírmelo?.", Message.ERROR);
 			e.printStackTrace();
+			log.error("Error al grabar archivo de audio wav");
 			responseOk = false;
 		} catch (Exception e) {
 			outputMessage = new Message("Disculpa, podrías hablar un poco más alto?", Message.ERROR);
-			e.printStackTrace();
+			googleResponse = "...";
+			log.debug("Google Voice devuelve null");
 			responseOk = false;
 		}
 		
-			
+		//MainGUIPrototype.getInstance().setTxtEntradaAudio(googleResponse);
+		MainGUI.getInstance().setTxtInput(googleResponse);
+		
+		// Agrego un item al historial
+		Atenea.getInstance().getHistory().addItem(new HistoryItem(
+						Atenea.getInstance().getUser(), 
+						HistoryItem.INPUT_VOICE_MESSAGE,
+						googleResponse, new Date()));
+		
 		// Si hay internet, envio el mensaje de entrada al servidor
 		if (responseOk) {
 			
@@ -73,6 +79,7 @@ public class RecognizeVoiceThread implements Runnable {
 				log.debug(outputMessage.getText());
 			} catch (Exception e) {
 				outputMessage = new Message("No logro conectarme al servidor.", Message.ERROR);
+				log.error("Error de conexion con el servidor");
 			}
 		} 
 	
