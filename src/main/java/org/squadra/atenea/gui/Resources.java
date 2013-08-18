@@ -13,10 +13,10 @@ import javax.swing.ImageIcon;
  */
 public class Resources {
 
-	private static final String BASE_PATH = "src/main/resources/";
+	private static final String BASE_PATH = new String().getClass().getResource("/").getPath();
 	
 	public static class Images {
-
+		
 		private static final String IMAGES_PATH = BASE_PATH + "images/";
 		
 		public static final Image ateneaIcon = 
