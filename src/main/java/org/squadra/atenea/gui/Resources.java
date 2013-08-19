@@ -200,7 +200,7 @@ public class Resources {
 		
 		public static class Images {
 			
-			private static final String IMAGES_PATH = "history_icons/";
+			private static final String IMAGES_PATH = BASE_PATH + "history/history_icons/";
 			
 			public static final String input_message = IMAGES_PATH + "input_message.png";
 			public static final String output_message = IMAGES_PATH + "output_message.png";
