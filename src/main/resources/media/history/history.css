@@ -1,0 +1,59 @@
+/* Estilos utilizados por el HTML con el historial. */
+
+body {
+	margin:0;
+}
+
+#header {
+	background-color:#000;
+	border-bottom:#888 10px solid;
+	position:fixed;
+	width:100%;
+	top:0;
+}
+
+#title {
+	margin:0 auto;
+	width:900px;
+	padding:15px;
+	font-family:Georgia, "Times New Roman", Times, serif;
+	font-size:24px;
+	color:#FFF;
+}
+
+#content {
+	margin:0 auto;
+	width:900px;
+	padding:15px;
+	margin-top:70px;
+}
+
+#history_table {
+	font-family:Verdana, Geneva, sans-serif;
+	font-size:11px;
+	color:#222;
+}
+
+tr.item:hover {
+	background-color:#F3F3F3;
+}
+
+td.date_full {
+	padding-top:20px;
+	padding-bottom:10px;
+	padding-left:0;
+	font-weight:bold;
+}
+
+td.date_short {
+	color:#AAA;
+}
+
+#foot {
+	font-family:Verdana, Geneva, sans-serif;
+	font-size:11px;
+	color:#AAA;
+	font-style:italic;
+	padding:5px;
+	padding-bottom:60px;
+}

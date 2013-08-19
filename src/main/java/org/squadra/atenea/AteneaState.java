@@ -17,6 +17,9 @@ public class AteneaState {
 	
 	/** Indica que el sistema se encuentra procesando el mensaje de entrada */
 	public static final int PROCESSING = 3;
+	
+	/** Indica que el sistema se encuentra procesando el mensaje de entrada */
+	public static final int LEARNING = 4;
 
 	/** Variable que representa el estado del sistema */
 	private int state;
@@ -51,6 +54,9 @@ public class AteneaState {
 				break;
 			case PROCESSING:
 				strState = "Procesando";
+				break;
+			case LEARNING:
+				strState = "Aprendiendo";
 				break;
 		}
 		return strState;

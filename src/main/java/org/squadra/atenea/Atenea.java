@@ -5,7 +5,10 @@ import lombok.Getter;
 import lombok.Setter;
 
 import org.squadra.atenea.ateneacommunication.AteneaWs;
+import org.squadra.atenea.gui.Resources;
 import org.squadra.atenea.gui.MainGUI;
+import org.squadra.atenea.gui.MainGUIPrototype;
+import org.squadra.atenea.history.History;
 import org.squadra.atenea.stt.Microphone;
 import org.squadra.atenea.util.StaticMethods;
 
@@ -26,6 +29,12 @@ public @Data class Atenea {
 	
 	/** Variable que almacena el estado actual del sistema */
 	private AteneaState state;
+	
+	/** Nombre del usuario que utiliza el software */
+	@Getter @Setter private String user;
+	
+	/** Historial de conversacion y acciones */
+	@Getter @Setter private History history;
 	
 	/** Objeto microfono que contiene las funciones de captura de audio */
 	@Getter @Setter private Microphone microphone;
@@ -67,8 +76,12 @@ public @Data class Atenea {
 	private Atenea() {
 		
 		// ACA HAY QUE CARGAR LA CONFIGURACION DEL SISTEMA
-		waveFilePath = "./audioInput.wav";
-		languageCode = "es-ES";
+		this.waveFilePath = Resources.Audio.inputVoicePath;
+		this.languageCode = "es-ES";
+		this.user = "Usuario";
+		
+		this.history = new History(Resources.HistoryElements.jsonPath);
+		this.history.loadHistoryFile();
 		
 		this.state = new AteneaState();
 		this.microphone = new Microphone();
@@ -80,6 +93,7 @@ public @Data class Atenea {
 	 */
 	public void launchMainGUI() {
 		MainGUI.createInstance();
+		//MainGUIPrototype.createInstance();
 	}
 
 	/**
@@ -107,7 +121,8 @@ public @Data class Atenea {
 	 */
 	public void setState(int state) {
 		this.state.setState(state);
-		MainGUI.getInstance().setTxtEstadoDelSistema(this.getStateText());
+		MainGUI.getInstance().changeGUIByState(this.getState());
+		//MainGUIPrototype.getInstance().setTxtEstadoDelSistema(this.getStateText());
 	}
 	
 }

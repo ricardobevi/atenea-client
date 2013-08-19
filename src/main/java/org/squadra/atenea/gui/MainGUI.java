@@ -1,21 +1,27 @@
 package org.squadra.atenea.gui;
-
-import java.awt.Dimension;
+import java.awt.AWTException;
+import java.awt.Color;
 import java.awt.Font;
+import java.awt.Insets;
+import java.awt.MenuItem;
+import java.awt.Point;
+import java.awt.PopupMenu;
+import java.awt.SystemTray;
+import java.awt.TrayIcon;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowStateListener;
 
-import javax.swing.GroupLayout;
-import javax.swing.GroupLayout.Alignment;
-import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JLayeredPane;
+import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
-import javax.swing.JTextField;
-import javax.swing.LayoutStyle.ComponentPlacement;
+import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
+import javax.swing.border.LineBorder;
 
 import org.squadra.atenea.Atenea;
 import org.squadra.atenea.AteneaState;
@@ -24,8 +30,9 @@ import org.squadra.atenea.stt.RecognizeTextThread;
 /**
  * Interfaz de usuario principal del programa.
  * Esta estructurada con Java Swing.
- * Contiene las principales funciones (como dialogar por voz o texto, aprender palabra, etc.)
+ * Permite el acceso del usuario a las principales funciones de Atenea.
  * @author Leandro Morrone
+ * 
  */
 @SuppressWarnings("serial")
 public class MainGUI extends JFrame {
@@ -65,27 +72,35 @@ public class MainGUI extends JFrame {
 		initComponents();
 	}
 	
-	// Componentes de la interfaz de usuario
-	private JTextField txtEstado;
-	private JTextField txtTiempoDeRespuesta;
-	private JTextField txtMetaData;
-	private JLabel lblEstado;
-	private JLabel lblEntradaAudio;
-	private JTextArea txtEntradaAudio;
-	private JLabel lblEntradaTexto;
-	private JTextArea txtEntradaTexto;
-	private JLabel lblSalida;
-	private JTextArea txtSalida;
-	private JLabel lblTiempoDeRespuesta;
-	private JLabel lblMetaData;
-	private JButton btnValorarBien;
-	private JButton btnValorarMal;
-	private JButton btnEnviar;
-	private JButton btnGrabarDetener;
-	private JButton btnReproducir;
-	private JButton btnNuevoTermino;
-	private JButton btnNuevaAccion;
-	private JButton btnValorarRegular;
+	// Puntos utilizados para el drag de la interfaz
+	private Point startDrag;
+	private Point startLoc;
+	
+	// Color actual de la interfaz
+	private Resources.Colors guiColor = Resources.Colors.GREEN;
+	private boolean mainButtonOver = false;
+	
+	// Elementos swing de la interfaz de usuario
+	private JLabel lblBackground;
+	private JLabel lblMainButton;
+	private JLabel lblCloseButton;
+	private JLabel lblMinimizeButton;
+	private JLabel lblSettingButton;
+	private JLabel lblHelpButton;
+	private JLabel lblActionsButton;
+	private JLabel lblRateButton;
+	private JLabel lblInputButton;
+	private JLabel lblHistoryButton;
+	private JTextArea txtInput;
+	private JScrollPane cpInput;
+	private JTextArea txtOutput;
+	private JScrollPane cpOutput;
+	
+	// Elementos para minimizar la interfaz a la barra de tareas
+	private SystemTray tray;
+	private PopupMenu trayMenu;
+	private TrayIcon trayIcon;
+	
 	
 	/**
 	 * Inicializo los componentes de la interfaz de usuario y la muestro en pantalla
@@ -93,221 +108,440 @@ public class MainGUI extends JFrame {
 	 */
 	private void initComponents() {
 		
-		// Seteo el look de la interfaz
+		//=================== PROPIEDADES DE LA VENTANA =====================
+		
 		try {
 			UIManager.setLookAndFeel("com.sun.java.swing.plaf.windows.WindowsLookAndFeel");
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+		setTitle("Atenea - " + Atenea.getInstance().getStateText());
+		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		setUndecorated(true);
+		setSize(547, 184);
+		setBackground(new Color(0,0,0,0));
+		setIconImage(Resources.Images.ateneaIcon);
+		setLocationRelativeTo(null);
+		setVisible(true);
+		setResizable(false);
+		setAlwaysOnTop(true); //TODO: leer de archivo config
+		
+		//========================== BACKGROUND ============================= 
+		
+		lblBackground = new JLabel();
+		lblBackground.setIcon(Resources.Images.Backgrounds.main);
+		lblBackground.setBounds(0, 0, 
+				lblBackground.getIcon().getIconWidth(), 
+				lblBackground.getIcon().getIconHeight());
+		
+		lblBackground.addMouseListener(new java.awt.event.MouseAdapter() {
+			@Override
+			public void mousePressed(java.awt.event.MouseEvent evt) {
+            	backgroundMousePressed(evt);
+            }
+		});
+		lblBackground.addMouseMotionListener(new java.awt.event.MouseMotionAdapter() {
+			@Override
+            public void mouseDragged(java.awt.event.MouseEvent evt) {
+            	backgroundMouseDragged(evt);
+            }
+        });
+		
+		//=================== BOTON CENTRAL PRINCIPAL =======================
+		
+		lblMainButton = new JLabel();
+		lblMainButton.setIcon(Resources.Images.MainButton.getByColor(guiColor));
+		lblMainButton.setBounds(85, 24, 
+				lblMainButton.getIcon().getIconWidth(), 
+				lblMainButton.getIcon().getIconHeight());
 
-		// Seteo las propiedades de la ventana
-		this.setSize(new Dimension(486, 438));
-		this.setTitle("Atenea (Interfaz de prueba)");
-		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		this.setLocationRelativeTo(null);
-		this.setVisible(true);
-		
-		// Inicializo los componentes de la interfaz
-		
-		lblEntradaAudio = new JLabel("Entrada de audio:");
-		
-		txtEntradaAudio = new JTextArea();
-		txtEntradaAudio.setBackground(UIManager.getColor("TextField.disabledBackground"));
-		txtEntradaAudio.setBorder(UIManager.getBorder("TextField.border"));
-		txtEntradaAudio.setEditable(false);
-		txtEntradaAudio.setFont(new Font("Tahoma", Font.PLAIN, 11));
-		
-		btnGrabarDetener = new JButton("Grabar / Detener");
-		btnGrabarDetener.addMouseListener(new MouseAdapter() {
+		lblMainButton.addMouseListener(new java.awt.event.MouseAdapter() {
 			@Override
-			public void mouseClicked(MouseEvent e) {
-				btnGrabarDetenerAction(e);
-			}
-		});
-		
-		btnReproducir = new JButton("Reproducir");
-		btnReproducir.addMouseListener(new MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+				if (SwingUtilities.isLeftMouseButton(evt)) {
+					lblMainButton.setIcon(Resources.Images.MainButton.getByLightColor(guiColor));
+	            	mainButtonMouseClicked();
+				}
+            }
 			@Override
-			public void mouseClicked(MouseEvent e) {
-				btnReproducirAction(e);
-			}
-		});
-		
-		lblEstado = new JLabel("Estado del sistema:");
-		
-		txtEstado = new JTextField();
-		txtEstado.setEditable(false);
-		txtEstado.setColumns(10);
-		setTxtEstadoDelSistema(atenea.getStateText());
-		
-		lblEntradaTexto = new JLabel("Entrada de texto:");
-		
-		txtEntradaTexto = new JTextArea();
-		txtEntradaTexto.setBorder(UIManager.getBorder("TextField.border"));
-		txtEntradaTexto.setFont(new Font("Tahoma", Font.PLAIN, 11));
-		
-		btnEnviar = new JButton("Enviar");
-		btnEnviar.addMouseListener(new MouseAdapter() {
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+				lblMainButton.setIcon(Resources.Images.MainButton.getByLightColor(guiColor));
+				mainButtonOver = true;
+            }
 			@Override
-			public void mouseClicked(MouseEvent e) {
-				btnEnviarAction(e);
-			}
-		});
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+				lblMainButton.setIcon(Resources.Images.MainButton.getByColor(guiColor));
+				mainButtonOver = true;
+            }
+			@Override
+            public void mousePressed(java.awt.event.MouseEvent evt) {
+				if (SwingUtilities.isLeftMouseButton(evt)) {
+					lblMainButton.setIcon(Resources.Images.MainButton.getByColor(guiColor));
+				}
+            }
+        });
+        
+		//====================== BOTON PARA CERRAR ==========================
 		
-		lblSalida = new JLabel("Salida:");
+		lblCloseButton = new JLabel();
+		lblCloseButton.setIcon(Resources.Images.CloseButton.grey);
+		lblCloseButton.setToolTipText("Cerrar");
+		lblCloseButton.setBounds(503, 33, 
+				lblCloseButton.getIcon().getIconWidth(), 
+				lblCloseButton.getIcon().getIconHeight());
+
+		lblCloseButton.addMouseListener(new java.awt.event.MouseAdapter() {
+			@Override
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+				if (SwingUtilities.isLeftMouseButton(evt)) {
+	            	closeButtonMouseClicked();
+				}
+            }
+			@Override
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+				lblCloseButton.setIcon(Resources.Images.CloseButton.getByColor(guiColor));
+            }
+			@Override
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+				lblCloseButton.setIcon(Resources.Images.CloseButton.grey);
+            }
+        });
 		
-		txtSalida = new JTextArea();
-		txtSalida.setBackground(UIManager.getColor("TextField.disabledBackground"));
-		txtSalida.setBorder(UIManager.getBorder("TextField.border"));
-		txtSalida.setEditable(false);
-		txtSalida.setFont(new Font("Tahoma", Font.PLAIN, 11));
+		//===================== BOTON PARA MINIMIZAR ========================
 		
-		btnValorarBien = new JButton("Ok");
+		lblMinimizeButton = new JLabel();
+		lblMinimizeButton.setIcon(Resources.Images.MinimizeButton.grey);
+		lblMinimizeButton.setToolTipText("Minimizar");
+		lblMinimizeButton.setBounds(503, 64, 
+				lblMinimizeButton.getIcon().getIconWidth(), 
+				lblMinimizeButton.getIcon().getIconHeight());
+
+		lblMinimizeButton.addMouseListener(new java.awt.event.MouseAdapter() {
+			@Override
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+				if (SwingUtilities.isLeftMouseButton(evt)) {
+					minimizeButtonMouseClicked();
+				}
+            }
+			@Override
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+				lblMinimizeButton.setIcon(Resources.Images.MinimizeButton.getByColor(guiColor));
+            }
+			@Override
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+				lblMinimizeButton.setIcon(Resources.Images.MinimizeButton.grey);
+            }
+        });
 		
-		btnValorarMal = new JButton("Mal");
+		//===================== ICONO BARRA DE TAREAS =======================
 		
-		lblTiempoDeRespuesta = new JLabel("Tiempo de respuesta:");
+		if (SystemTray.isSupported()) {
+			
+			tray = SystemTray.getSystemTray();
+			
+			// Creo el menu contextual y agrego los items
+			trayMenu = new PopupMenu();
+			
+			MenuItem item1 = new MenuItem("Grabar mensaje");
+			item1.addActionListener(new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					mainButtonMouseClicked();
+				}
+			});
+			MenuItem item2 = new MenuItem("Configuración");
+			item2.addActionListener(new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					settingButtonMouseClicked();
+				}
+			});
+			MenuItem item3 = new MenuItem("Ayuda");
+			item3.addActionListener(new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					helpButtonMouseClicked();
+				}
+			});
+			MenuItem item4 = new MenuItem("Maximizar");
+			item4.addActionListener(new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					maximizeButtonMouseClicked();
+				}
+			});
+			MenuItem item5 = new MenuItem("Cerrar");
+			item5.addActionListener(new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					closeButtonMouseClicked();
+				}
+			});
+			trayMenu.add(item1);
+			trayMenu.addSeparator();
+			trayMenu.add(item2);
+			trayMenu.add(item3);
+			trayMenu.add(item4);
+			trayMenu.add(item5);
+			
+			// Creo el icono y le agrego maximizacion haciendo doble click
+			trayIcon = new TrayIcon(Resources.Images.ateneaIcon, "Atenea", trayMenu);
+			trayIcon.setImageAutoSize(true);
+			trayIcon.addMouseListener(new java.awt.event.MouseAdapter() {
+				@Override
+	            public void mouseClicked(java.awt.event.MouseEvent evt) {
+					if (evt.getClickCount() >= 2) {
+						maximizeButtonMouseClicked();
+					}
+	            }
+			});
+		} 
+		else {
+			System.out.println("TrayIcon no soportado.");
+		}
 		
-		txtTiempoDeRespuesta = new JTextField();
-		txtTiempoDeRespuesta.setEditable(false);
-		txtTiempoDeRespuesta.setColumns(10);
 		
-		lblMetaData = new JLabel("Meta-data:");
+		//==================== BOTON DE CONFIGURACION =======================
 		
-		txtMetaData = new JTextField();
-		txtMetaData.setEditable(false);
-		txtMetaData.setColumns(10);
+		lblSettingButton = new JLabel();
+		lblSettingButton.setIcon(Resources.Images.SettingButton.grey);
+		lblSettingButton.setToolTipText("Configuración");
+		lblSettingButton.setBounds(503, 95, 
+				lblSettingButton.getIcon().getIconWidth(), 
+				lblSettingButton.getIcon().getIconHeight());
+
+		lblSettingButton.addMouseListener(new java.awt.event.MouseAdapter() {
+			@Override
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+				if (SwingUtilities.isLeftMouseButton(evt)) {
+	            	settingButtonMouseClicked();
+				}
+            }
+			@Override
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+				lblSettingButton.setIcon(Resources.Images.SettingButton.getByColor(guiColor));
+            }
+			@Override
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+				lblSettingButton.setIcon(Resources.Images.SettingButton.grey);
+            }
+        });
 		
-		btnNuevoTermino = new JButton("Nuevo t\u00E9rmino");
+		//======================== BOTON DE AYUDA ===========================
 		
-		btnNuevaAccion = new JButton("Nueva acci\u00F3n");
+		lblHelpButton = new JLabel();
+		lblHelpButton.setIcon(Resources.Images.HelpButton.grey);
+		lblHelpButton.setToolTipText("Ayuda");
+		lblHelpButton.setBounds(503, 126, 
+				lblHelpButton.getIcon().getIconWidth(), 
+				lblHelpButton.getIcon().getIconHeight());
+
+		lblHelpButton.addMouseListener(new java.awt.event.MouseAdapter() {
+			@Override
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+				if (SwingUtilities.isLeftMouseButton(evt)) {
+	            	helpButtonMouseClicked();
+				}
+            }
+			@Override
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+				lblHelpButton.setIcon(Resources.Images.HelpButton.getByColor(guiColor));
+            }
+			@Override
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+				lblHelpButton.setIcon(Resources.Images.HelpButton.grey);
+            }
+        });
 		
-		btnValorarRegular = new JButton("Reg");
+		//================== BOTON DE ENSEÑAR ACCIONES ======================
 		
-		// Armo la estructura de la interfaz utilizando los componentes anteriores
+		lblActionsButton = new JLabel();
+		lblActionsButton.setIcon(Resources.Images.ActionsButton.grey);
+		lblActionsButton.setToolTipText("Enseñar acción");
+		lblActionsButton.setBounds(19, 33, 
+				lblActionsButton.getIcon().getIconWidth(), 
+				lblActionsButton.getIcon().getIconHeight());
+
+		lblActionsButton.addMouseListener(new java.awt.event.MouseAdapter() {
+			@Override
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+				if (SwingUtilities.isLeftMouseButton(evt)) {
+	            	actionsButtonMouseClicked();
+				}
+            }
+			@Override
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+				lblActionsButton.setIcon(Resources.Images.ActionsButton.light_grey);
+            }
+			@Override
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+				lblActionsButton.setIcon(Resources.Images.ActionsButton.grey);
+            }
+        });
 		
-		GroupLayout groupLayout = new GroupLayout(this.getContentPane());
-		groupLayout.setHorizontalGroup(
-			groupLayout.createParallelGroup(Alignment.LEADING)
-				.addGroup(groupLayout.createSequentialGroup()
-					.addContainerGap()
-					.addGroup(groupLayout.createParallelGroup(Alignment.LEADING)
-						.addGroup(Alignment.TRAILING, groupLayout.createSequentialGroup()
-							.addGroup(groupLayout.createParallelGroup(Alignment.TRAILING)
-								.addComponent(txtEstado, GroupLayout.DEFAULT_SIZE, 452, Short.MAX_VALUE)
-								.addGroup(groupLayout.createSequentialGroup()
-									.addComponent(txtEntradaAudio, GroupLayout.DEFAULT_SIZE, 331, Short.MAX_VALUE)
-									.addPreferredGap(ComponentPlacement.RELATED)
-									.addGroup(groupLayout.createParallelGroup(Alignment.LEADING, false)
-										.addComponent(btnGrabarDetener, Alignment.TRAILING)
-										.addComponent(btnReproducir, GroupLayout.PREFERRED_SIZE, 115, GroupLayout.PREFERRED_SIZE))))
-							.addGap(8))
-						.addGroup(Alignment.TRAILING, groupLayout.createSequentialGroup()
-							.addComponent(lblEstado)
-							.addContainerGap(367, Short.MAX_VALUE))
-						.addGroup(Alignment.TRAILING, groupLayout.createSequentialGroup()
-							.addComponent(lblEntradaAudio)
-							.addContainerGap(374, Short.MAX_VALUE))
-						.addGroup(groupLayout.createSequentialGroup()
-							.addComponent(lblEntradaTexto)
-							.addContainerGap(374, Short.MAX_VALUE))
-						.addGroup(groupLayout.createSequentialGroup()
-							.addGroup(groupLayout.createParallelGroup(Alignment.TRAILING)
-								.addGroup(groupLayout.createSequentialGroup()
-									.addComponent(txtEntradaTexto, GroupLayout.DEFAULT_SIZE, 331, Short.MAX_VALUE)
-									.addPreferredGap(ComponentPlacement.RELATED)
-									.addComponent(btnEnviar, GroupLayout.PREFERRED_SIZE, 115, GroupLayout.PREFERRED_SIZE))
-								.addGroup(groupLayout.createSequentialGroup()
-									.addComponent(txtSalida, GroupLayout.DEFAULT_SIZE, 289, Short.MAX_VALUE)
-									.addPreferredGap(ComponentPlacement.RELATED)
-									.addComponent(btnValorarBien)
-									.addPreferredGap(ComponentPlacement.RELATED)
-									.addComponent(btnValorarRegular)
-									.addPreferredGap(ComponentPlacement.RELATED)
-									.addComponent(btnValorarMal))
-								.addGroup(groupLayout.createSequentialGroup()
-									.addComponent(btnNuevoTermino)
-									.addPreferredGap(ComponentPlacement.RELATED)
-									.addComponent(btnNuevaAccion)))
-							.addGap(8))
-						.addGroup(groupLayout.createSequentialGroup()
-							.addComponent(lblSalida)
-							.addContainerGap(428, Short.MAX_VALUE))
-						.addGroup(groupLayout.createSequentialGroup()
-							.addGroup(groupLayout.createParallelGroup(Alignment.LEADING)
-								.addComponent(lblTiempoDeRespuesta)
-								.addComponent(txtTiempoDeRespuesta, 104, 104, 104))
-							.addGap(27)
-							.addGroup(groupLayout.createParallelGroup(Alignment.LEADING)
-								.addComponent(lblMetaData)
-								.addComponent(txtMetaData, GroupLayout.DEFAULT_SIZE, 317, Short.MAX_VALUE))
-							.addGap(12))))
-		);
-		groupLayout.setVerticalGroup(
-			groupLayout.createParallelGroup(Alignment.LEADING)
-				.addGroup(groupLayout.createSequentialGroup()
-					.addContainerGap()
-					.addComponent(lblEstado)
-					.addGap(5)
-					.addComponent(txtEstado, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-					.addPreferredGap(ComponentPlacement.RELATED)
-					.addComponent(lblEntradaAudio)
-					.addPreferredGap(ComponentPlacement.RELATED)
-					.addGroup(groupLayout.createParallelGroup(Alignment.LEADING, false)
-						.addGroup(groupLayout.createSequentialGroup()
-							.addComponent(btnGrabarDetener, GroupLayout.PREFERRED_SIZE, 42, GroupLayout.PREFERRED_SIZE)
-							.addPreferredGap(ComponentPlacement.RELATED, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-							.addComponent(btnReproducir))
-						.addComponent(txtEntradaAudio, Alignment.TRAILING, GroupLayout.PREFERRED_SIZE, 71, GroupLayout.PREFERRED_SIZE))
-					.addGap(6)
-					.addComponent(lblEntradaTexto)
-					.addPreferredGap(ComponentPlacement.RELATED)
-					.addGroup(groupLayout.createParallelGroup(Alignment.LEADING)
-						.addComponent(btnEnviar, GroupLayout.PREFERRED_SIZE, 44, GroupLayout.PREFERRED_SIZE)
-						.addComponent(txtEntradaTexto, GroupLayout.PREFERRED_SIZE, 45, GroupLayout.PREFERRED_SIZE))
-					.addPreferredGap(ComponentPlacement.RELATED)
-					.addComponent(lblSalida)
-					.addPreferredGap(ComponentPlacement.RELATED)
-					.addGroup(groupLayout.createParallelGroup(Alignment.TRAILING)
-						.addGroup(groupLayout.createParallelGroup(Alignment.BASELINE)
-							.addComponent(btnValorarMal, GroupLayout.PREFERRED_SIZE, 44, GroupLayout.PREFERRED_SIZE)
-							.addComponent(btnValorarBien, GroupLayout.PREFERRED_SIZE, 44, GroupLayout.PREFERRED_SIZE)
-							.addComponent(btnValorarRegular, GroupLayout.PREFERRED_SIZE, 44, GroupLayout.PREFERRED_SIZE))
-						.addComponent(txtSalida, GroupLayout.PREFERRED_SIZE, 45, GroupLayout.PREFERRED_SIZE))
-					.addPreferredGap(ComponentPlacement.UNRELATED)
-					.addGroup(groupLayout.createParallelGroup(Alignment.BASELINE)
-						.addComponent(lblTiempoDeRespuesta)
-						.addComponent(lblMetaData))
-					.addPreferredGap(ComponentPlacement.RELATED)
-					.addGroup(groupLayout.createParallelGroup(Alignment.BASELINE)
-						.addComponent(txtTiempoDeRespuesta, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-						.addComponent(txtMetaData, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
-					.addGap(18)
-					.addGroup(groupLayout.createParallelGroup(Alignment.LEADING, false)
-						.addComponent(btnNuevaAccion, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-						.addComponent(btnNuevoTermino, GroupLayout.DEFAULT_SIZE, 32, Short.MAX_VALUE))
-					.addGap(19))
-		);
-		this.getContentPane().setLayout(groupLayout);
+		//================= BOTON DE CALIFICAR RESPUESTA ====================
 		
-		btnNuevaAccion.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				setExtendedState(JFrame.ICONIFIED);
-				ActionsGUI win = new ActionsGUI();
-				win.launchFrame();
-			}
-		});
+		lblRateButton = new JLabel();
+		lblRateButton.setIcon(Resources.Images.RateButton.grey);
+		lblRateButton.setToolTipText("Calificar respuesta");
+		lblRateButton.setBounds(19, 95, 
+				lblRateButton.getIcon().getIconWidth(), 
+				lblRateButton.getIcon().getIconHeight());
+
+		lblRateButton.addMouseListener(new java.awt.event.MouseAdapter() {
+			@Override
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+				if (SwingUtilities.isLeftMouseButton(evt)) {
+	            	rateButtonMouseClicked();
+				}
+            }
+			@Override
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+				lblRateButton.setIcon(Resources.Images.RateButton.light_grey);
+            }
+			@Override
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+				lblRateButton.setIcon(Resources.Images.RateButton.grey);
+            }
+        });
+		
+		//========= BOTON PARA CAMBIAR A ENTRADA POR TECLADO/VOZ ============
+		
+		lblInputButton = new JLabel();
+		lblInputButton.setIcon(Resources.Images.InputButton.grey);
+		lblInputButton.setToolTipText("Enviar texto");
+		lblInputButton.setBounds(215, 33, 
+				lblInputButton.getIcon().getIconWidth(), 
+				lblInputButton.getIcon().getIconHeight());
+
+		lblInputButton.addMouseListener(new java.awt.event.MouseAdapter() {
+			@Override
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+				if (SwingUtilities.isLeftMouseButton(evt)) {
+	            	inputButtonMouseClicked();
+				}
+            }
+			@Override
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+				lblInputButton.setIcon(Resources.Images.InputButton.light_grey);
+				txtAreaLight(cpInput, true);
+            }
+			@Override
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+				lblInputButton.setIcon(Resources.Images.InputButton.grey);
+				txtAreaLight(cpInput, false);
+            }
+        });
+		
+		//=================== BOTON PARA VER HISTORIAL ======================
+		
+		lblHistoryButton = new JLabel();
+		lblHistoryButton.setIcon(Resources.Images.HistoryButton.grey);
+		lblHistoryButton.setToolTipText("Historial");
+		lblHistoryButton.setBounds(215, 95, 
+				lblHistoryButton.getIcon().getIconWidth(), 
+				lblHistoryButton.getIcon().getIconHeight());
+
+		lblHistoryButton.addMouseListener(new java.awt.event.MouseAdapter() {
+			@Override
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+				if (SwingUtilities.isLeftMouseButton(evt)) {
+	            	historyButtonMouseClicked();
+				}
+            }
+			@Override
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+				lblHistoryButton.setIcon(Resources.Images.HistoryButton.light_grey);
+				txtAreaLight(cpOutput, true);
+            }
+			@Override
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+				lblHistoryButton.setIcon(Resources.Images.HistoryButton.grey);
+				txtAreaLight(cpOutput, false);
+            }
+        });
+		
+		//===================== TEXTAREA DE ENTRADA =========================
+		
+		txtInput = new JTextArea();
+		txtInput.setFont(new Font("Arial", Font.PLAIN, 12));
+		txtInput.setLineWrap(true);
+		txtInput.setWrapStyleWord(true);
+		txtInput.setMargin(new Insets(3, 5, 3, 5));
+		cpInput = new JScrollPane();
+		cpInput.setBorder(new LineBorder(new Color(175, 175, 175), 4));
+		cpInput.setViewportView(txtInput);
+		cpInput.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+		cpInput.setBounds(282, 33, 212, 56);
+		txtInput.addMouseListener(new java.awt.event.MouseAdapter() {
+			@Override
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+				lblInputButton.setIcon(Resources.Images.InputButton.light_grey);
+				txtAreaLight(cpInput, true);
+            }
+			@Override
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+				lblInputButton.setIcon(Resources.Images.InputButton.grey);
+				txtAreaLight(cpInput, false);
+            }
+        });
+		
+		//====================== TEXTAREA DE SALIDA =========================
+		
+		txtOutput = new JTextArea();
+		txtOutput.setFont(new Font("Arial", Font.PLAIN, 12));
+		txtOutput.setLineWrap(true);
+		txtOutput.setWrapStyleWord(true);
+		txtOutput.setMargin(new Insets(3, 5, 3, 5));
+		txtOutput.setBackground(new Color(240, 240, 240));
+		txtOutput.setEditable(false);
+		cpOutput = new JScrollPane();
+		cpOutput.setBorder(new LineBorder(new Color(175, 175, 175), 4));
+		cpOutput.setViewportView(txtOutput);
+		cpOutput.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+		cpOutput.setBounds(282, 95, 212, 56);
+		txtOutput.addMouseListener(new java.awt.event.MouseAdapter() {
+			@Override
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+				lblHistoryButton.setIcon(Resources.Images.HistoryButton.light_grey);
+				txtAreaLight(cpOutput, true);
+            }
+			@Override
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+				lblHistoryButton.setIcon(Resources.Images.HistoryButton.grey);
+				txtAreaLight(cpOutput, false);
+            }
+        });
+
+		
+		//===================================================================
+		// Agrego todos los elementos a la interfaz en diferentes capas
+		
+		JLayeredPane layeredPane = getLayeredPane();
+		layeredPane.add(lblBackground, new Integer(1));   //el Integer es el z-index
+		
+		layeredPane.add(lblMainButton, new Integer(2));
+		layeredPane.add(lblCloseButton, new Integer(2));
+		layeredPane.add(lblMinimizeButton, new Integer(2));
+		layeredPane.add(lblSettingButton, new Integer(2));
+		layeredPane.add(lblHelpButton, new Integer(2));
+		
+		layeredPane.add(cpInput, new Integer(3));
+		layeredPane.add(cpOutput, new Integer(3));
+		
+		layeredPane.add(lblActionsButton, new Integer(4));
+		layeredPane.add(lblRateButton, new Integer(4));
+		layeredPane.add(lblInputButton, new Integer(4));
+		layeredPane.add(lblHistoryButton, new Integer(4));
 	}
-
+	
 	
 	/**
-	 * Si el sistema se encuentra en espera, comienza a grabar la entrada de audio.
-	 * Si el sistema se encuentra grabando, detiene la grabacion y comienza el reconocimiento.
-	 * Esta funcion se ejecuta cuando se presiona el boton de Grabar/Detener
-	 * @param e Evento capturado al hacer click sobre el boton Grabar/Detener
-	 * @author Leandro Morrone
+	 * Se ejecuta presionando sobre el boton principal.
+	 * 
+	 * 
 	 */
-	private void btnGrabarDetenerAction(MouseEvent e) {
+	protected void mainButtonMouseClicked() {
 		if (atenea.getState() == AteneaState.WAITING) {
 			atenea.getMicrophone().startRecording();
 		}
@@ -317,10 +551,78 @@ public class MainGUI extends JFrame {
 	}
 	
 	/**
-	 * Si el sistema se encuentra en espera, envia el mensaje para que sea reconocido.
-	 * @param e Evento capturado al hacer click sobre el boton Enviar
+	 * Se ejecuta presionando sobre el boton de cerrar.
+	 * Cierra el programa.
 	 */
-	protected void btnEnviarAction(MouseEvent e) {
+	protected void closeButtonMouseClicked() {
+		System.exit(0);
+	}
+	
+	/**
+	 * Se ejecuta presionando sobre el boton de minimizar.
+	 * Minimiza la aplicacion, creando un icono en la barra de tareas.
+	 */
+	protected void minimizeButtonMouseClicked() {
+		try {
+			tray.add(trayIcon);
+		} catch (AWTException e) {
+			e.printStackTrace();
+		}
+		setVisible(false);
+		setExtendedState(JFrame.ICONIFIED);
+	}
+	
+	/**
+	 * Se ejecuta presionando sobre el icono de la barra de tareas o 
+	 * el item de maximizar del menu.
+	 * Maximiza la aplicacion.
+	 */
+	protected void maximizeButtonMouseClicked() {
+		tray.remove(trayIcon);
+		setVisible(true);
+		setExtendedState(JFrame.NORMAL);
+	}
+	
+	/**
+	 * Se ejecuta presionando sobre el boton de configuracion.
+	 * Abre la pantalla de configuracion.
+	 */
+	protected void settingButtonMouseClicked() {
+		// TODO Auto-generated method stub
+	}
+
+	/**
+	 * Se ejecuta presionando sobre el boton de ayuda.
+	 * Abre la seccion de ayuda del sitio web.
+	 */
+	protected void helpButtonMouseClicked() {
+		// TODO Auto-generated method stub
+	}
+	
+	/**
+	 * Se ejecuta presionando sobre el boton de nueva accion.
+	 * Abre la pantalla de grabacion de macros.
+	 */
+	protected void actionsButtonMouseClicked() {
+		ActionsGUI win = new ActionsGUI();
+		win.launchFrame();
+		Atenea.getInstance().setState(AteneaState.LEARNING);
+	}
+	
+	/**
+	 * Se ejecuta presionando sobre el boton de calificar respuesta.
+	 * Despliega las opciones para calificar la respuesta.
+	 */
+	protected void rateButtonMouseClicked() {
+		// TODO Auto-generated method stub
+	}
+	
+	/**
+	 * Se ejecuta presionando sobre el boton de entrada.
+	 * Cambia el modo de entrada de voz a teclado y viceversa
+	 */
+	protected void inputButtonMouseClicked() {
+		// TODO Este boton por ahora envia texto, pero hay que cambiarlo
 		if (atenea.getState() == AteneaState.WAITING) {
 			atenea.setState(AteneaState.PROCESSING);
 			new Thread(new RecognizeTextThread()).start();
@@ -328,43 +630,117 @@ public class MainGUI extends JFrame {
 	}
 	
 	/**
-	 * Si el sistema se encuentra en espera, envia el mensaje para que sea reconocido.
-	 * @param e Evento capturado al hacer click sobre el boton Enviar
+	 * Se ejecuta presionando sobre el boton de historial.
+	 * Abre la pantalla de historial en el navegador web por defecto.
 	 */
-	protected void btnReproducirAction(MouseEvent e) {
-		if (atenea.getState() == AteneaState.WAITING) {
-			atenea.getMicrophone().playRecording();
-		}
-	}
-	
-	// Funciones para setear y obtener el contenido de los campos de texto de la interfaz
-	
-	public void setTxtEstadoDelSistema(String text) {
-		txtEstado.setText(text + "...");
-	}
-	
-	public void setTxtTiempoDeRespuesta(String text) {
-		txtTiempoDeRespuesta.setText(text);
-	}
-	
-	public void setTxtMetaData(String text) {
-		txtMetaData.setText(text);
-	}
-	
-	public void setTxtEntradaAudio(String text) {
-		txtEntradaAudio.setText(text);
-	}
-	
-	public void setTxtSalida(String text) {
-		txtSalida.setText(text);
-	}
-	
-	public String getTxtSalida() {
-		return txtSalida.getText();
-	}
-	
-	public String getTxtEntradaTexto() {
-		return txtEntradaTexto.getText();
+	protected void historyButtonMouseClicked() {
+		new HistoryGUI();
 	}
 
+	
+	/**
+	 * Se ejecuta cuando se hace click sobre el fondo de la interfaz.
+	 * Guarda la posicion donde se hizo click.
+	 * @param evt Evento capturado del mouse.
+	 */
+	protected void backgroundMousePressed(MouseEvent evt) {
+		this.startDrag = this.getScreenLocation(evt);
+        this.startLoc = this.getLocation();
+	}
+	
+	/**
+	 * Se ejecuta cuando se hace un arrastre de la interfaz.
+	 * Mueve la interfaz a medida que se arrastra el mouse.
+	 * @param evt Evento capturado del mouse.
+	 */
+	protected void backgroundMouseDragged(MouseEvent evt) {
+		Point current = this.getScreenLocation(evt);
+	    Point offset = new Point((int) current.getX() - (int) startDrag.getX(),
+	        (int) current.getY() - (int) startDrag.getY());
+
+	    Point new_location = new Point(
+	        (int) (this.startLoc.getX() + offset.getX()), (int) (this.startLoc
+	            .getY() + offset.getY()));
+	        this.setLocation(new_location);
+	}
+	
+	private Point getScreenLocation(MouseEvent e) {
+        Point cursor = e.getPoint();
+        Point target_location = this.getLocationOnScreen();
+        return new Point((int) (target_location.getX() + cursor.getX()),
+            (int) (target_location.getY() + cursor.getY()));
+    }
+	
+	public void setTxtInput(String txt) {
+		txtInput.setText(txt);
+	}
+	
+	public String getTxtInput() {
+		return txtInput.getText();
+	}
+	
+	public void setTxtOutput(String txt) {
+		txtOutput.setText(txt);
+	}
+	
+	public String getTxtOutput() {
+		return txtOutput.getText();
+	}
+	
+	/**
+	 * Cambia el color actual de la GUI segun el estado en que se encuentra
+	 * y cambia el titulo de la aplicacion.
+	 * @param state Estado de Atenea
+	 */
+	public void changeGUIByState(int state) {
+		switch (state) {
+			case AteneaState.WAITING: 
+				guiColor = Resources.Colors.GREEN;
+				trayMenu.getItem(0).setLabel("Grabar mensaje");
+				break;
+			case AteneaState.RECORDING: 
+				guiColor = Resources.Colors.RED;
+				trayMenu.getItem(0).setLabel("Detener grabación");
+				break;
+			case AteneaState.PROCESSING: 
+				guiColor = Resources.Colors.YELLOW;
+				break;
+			case AteneaState.PLAYING: 
+				guiColor = Resources.Colors.ORANGE;
+				break;
+			case AteneaState.LEARNING: 
+				guiColor = Resources.Colors.BLUE;
+				break;
+			default:
+				guiColor = Resources.Colors.YELLOW;
+		}
+		
+		if (mainButtonOver) {
+			lblMainButton.setIcon(Resources.Images.MainButton.getByLightColor(guiColor));
+		}
+		else {
+			lblMainButton.setIcon(Resources.Images.MainButton.getByColor(guiColor));
+		}
+		//TODO: cambiar los colores del trayIcon
+		
+		if (state == AteneaState.WAITING) {
+			txtInput.setBackground(Color.WHITE);
+			txtInput.setEditable(true);
+		}
+		else {
+			txtInput.setBackground(new Color(240, 240, 240));
+			txtInput.setEditable(false);
+		}
+		setTitle("Atenea - " + Atenea.getInstance().getStateText());
+	}
+	
+	
+	private void txtAreaLight(JScrollPane area, boolean light) {
+		if (light) {
+			area.setBorder(new LineBorder(new Color(190, 190, 190), 4));
+		}
+		else {
+			area.setBorder(new LineBorder(new Color(175, 175, 175), 4));
+		}
+	}
 }

@@ -2,8 +2,12 @@ package org.squadra.atenea.stt;
 
 import javax.sound.sampled.AudioFileFormat;
 
+import lombok.extern.log4j.Log4j;
+
 import org.squadra.atenea.Atenea;
 import org.squadra.atenea.AteneaState;
+import org.squadra.atenea.ateneacommunication.Message;
+import org.squadra.atenea.tts.MessageProcessor;
 
 /**
  * Clase que funciona como interfaz entre la GUI y el AudioRecorder.
@@ -11,6 +15,7 @@ import org.squadra.atenea.AteneaState;
  * otras clases, y reduce el acomplamiento entre AudioRecorder y Atenea.
  * @author Leandro Morrone
  */
+@Log4j
 public class Microphone {
 
 	/** Objeto para grabar, detener y reproducir audio */
@@ -27,8 +32,20 @@ public class Microphone {
 	 * Inicia la grabacion de voz y cambia el estado de atenea a grabando.
 	 */
 	public void startRecording() {
-		Atenea.getInstance().setState(AteneaState.RECORDING);
-		recorder.startRecording();
+		try {
+			Atenea.getInstance().setState(AteneaState.RECORDING);
+			recorder.startRecording();
+		} catch (Exception e) {
+			(new Thread() {
+				public void run() {
+					Message outputMessage = new Message(
+							"No tienes encendido tu micrófono.", Message.ERROR);
+					MessageProcessor.processMessage(outputMessage);
+				}
+			}).start();
+			log.error("No se detecta el microfono.");
+		}
+
 	}
 	
 	/**
