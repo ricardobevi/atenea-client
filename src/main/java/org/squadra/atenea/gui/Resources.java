@@ -13,7 +13,7 @@ import javax.swing.ImageIcon;
  */
 public class Resources {
 
-	private static final String BASE_PATH = new String().getClass().getResource("/").getPath();
+	private static final String BASE_PATH = new String().getClass().getResource("/media/").getPath();
 	
 	public static class Images {
 		
