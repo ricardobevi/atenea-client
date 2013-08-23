@@ -103,13 +103,9 @@ System.out.println(NativeKeyEvent.getKeyText(e.getKeyCode()));
 				}
 			});
 			
-//			try {
-//				new Robot().keyPress(KeyEvent.VK_ESCAPE);
-//				new Robot().keyRelease(KeyEvent.VK_ESCAPE);
-//			} catch (AWTException e1) {
-//				e1.printStackTrace();
-//			}
-			
+			frame.setAlwaysOnTop(true);
+			frame.toFront();
+			frame.requestFocus();					
 			frame.setVisible(true);	
 		}
 	}
